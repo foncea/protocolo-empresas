@@ -1,2 +1,2 @@
 # protocolo-empresas
-Simulaciones protocolo basadas en SIR
+Simulaciones protocolo empresas

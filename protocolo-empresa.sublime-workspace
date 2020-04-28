@@ -55,8 +55,63 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "simulaciones_eficiente.py",
+			"settings":
+			{
+				"buffer_size": 6917,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "base/seir/algoritmos.py",
+			"settings":
+			{
+				"buffer_size": 16756,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "base/seir/individuo.py",
+			"settings":
+			{
+				"buffer_size": 8584,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "base/seir/simulador.py",
+			"settings":
+			{
+				"buffer_size": 14610,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "correr_simulacion.py",
+			"settings":
+			{
+				"buffer_size": 947,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "⠤\n▸ .ipynb_checkpoints\\\n▸ __pycache__\\\n▸ datos_graficos_14-04\\\n▸ datos_simulaciones\\\n▸ New folder\\\n▸ Parametros y supuestos simulacion\\\n▸ plots\\\n▾ protocolo-empresas\\\n   ▸ .git\\\n   ▸ base\\\n   ▸ datos_simulaciones\\\n   ≡ .Rhistory\n   ≡ analisis_resultados.R\n   ≡ correr_simulacion.py\n   ≡ protocolo-empresa.sublime-project\n   ≡ protocolo-empresa.sublime-workspace\n   ≡ README.md\n   ≡ simulaciones_eficiente.py\n   ≡ test.py\n▸ senama\\\n≡ .RData\n≡ .Rhistory\n≡ algoritmos.py\n≡ correr_simulacion.py\n≡ correr_simulacion_arauco.py\n≡ crear_tabla.R\n≡ documentacion_simulaciones.aux\n≡ documentacion_simulaciones.log\n≡ documentacion_simulaciones.pdf\n≡ documentacion_simulaciones.synctex.gz\n≡ documentacion_simulaciones.tex\n≡ flowchart_simulacion.pdf\n≡ flowchart_simulacion.pptx\n≡ flowchart_simulacion_en.pdf\n≡ GB prouesta Ac-Covid.pptx\n≡ individuo.py\n≡ individuo_test.ipynb\n≡ Paper screening covid 95%.docx\n≡ probabilidades_condicionales_escenarios.R\n≡ senama_pcr_probabilidad_infeccion.R\n≡ senama_probabilidad_infeccion.R\n≡ senama_r0_probabilidad_infeccion.R\n≡ simulaciones_algoritmo_bios.py\n≡ simulaciones_arauco.py\n≡ simulaciones_eficiente.py\n≡ simulaciones_protocolo_covid.sublime-project\n≡ simulaciones_protocolo_covid.sublime-workspace\n≡ simulaciones_v2.py\n≡ simulaciones_v3.py\n≡ simulador.py\n≡ tabla_con_cuarentena.png\n≡ tabla_infecciosos_trabajando.png\n≡ tabla_r0=2.png\n≡ tabla_sumario.png\n≡ TEST_DESVSTD.csv\n≡ transformar_datos.R\n≡ visualizar_simulaciones.R\n≡ visualizar_simulaciones_2.R\n≡ visualizar_simulaciones_3.R\n≡ visualizar_simulaciones_arauco.R\n≡ visualizar_simulaciones_v2.R\n≡ visualizar_simulaciones_v2_2.R\n≡ visualizar_simulaciones_v3.R",
+			"settings":
+			{
+				"buffer_size": 1642,
+				"line_ending": "Windows",
+				"name": "𝌆 simulaciones_protocolo",
+				"read_only": true,
+				"scratch": true
+			}
+		}
 	],
-	"build_system": "",
+	"build_system": "Packages/Python/Python.sublime-build",
 	"build_system_choices":
 	[
 		[
@@ -79,10 +134,34 @@
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 392.0,
-		"last_filter": "colo",
+		"height": 204.0,
+		"last_filter": "remove",
 		"selected_items":
 		[
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"build",
+				"Build With: Python"
+			],
+			[
+				"buildvi",
+				"Disable/Enable buildview for this window"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"brow",
+				"Browse Mode: Current file or project"
+			],
 			[
 				"colo",
 				"UI: Select Color Scheme"
@@ -136,10 +215,6 @@
 				"SublimeREPL: Python - IPython"
 			],
 			[
-				"install",
-				"Package Control: Install Package"
-			],
-			[
 				"shel",
 				"Set Syntax: Haskell"
 			],
@@ -150,10 +225,6 @@
 			[
 				"replip",
 				"SublimeREPL: Python - IPython"
-			],
-			[
-				"remove",
-				"Package Control: Remove Package"
 			],
 			[
 				"sehll",
@@ -170,10 +241,6 @@
 			[
 				"add re",
 				"Package Control: Add Repository"
-			],
-			[
-				"insta",
-				"Package Control: Install Package"
 			],
 			[
 				"control",
@@ -212,7 +279,7 @@
 				"UI: Select Color Scheme"
 			]
 		],
-		"width": 412.0
+		"width": 468.0
 	},
 	"console":
 	{
@@ -232,6 +299,9 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/senama/correr_simulacion.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/protocolo-empresa.sublime-project",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/protocolo-empresa.sublime-workspace",
 		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/senama/simulador.py",
 		"/C/Users/Patricio Foncea/.jupyter/jupyter_notebook_config.py",
 		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/algoritmos.py",
@@ -315,8 +385,275 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "simulaciones_eficiente.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6917,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6878,
+								6878
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2062.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 1,
+					"file": "base/seir/algoritmos.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 16756,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "base/seir/individuo.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8584,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4827,
+								4827
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1702.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "base/seir/simulador.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 14610,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2546,
+								2546
+							]
+						],
+						"settings":
+						{
+							"buildview.enabled": true,
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 418.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 4,
+					"file": "correr_simulacion.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 947,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								471,
+								471
+							]
+						],
+						"settings":
+						{
+							"buildview.enabled": true,
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 5,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1642,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								147,
+								147
+							]
+						],
+						"settings":
+						{
+							"dired_count": 63,
+							"dired_index":
+							[
+								"⠤",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\.ipynb_checkpoints\\",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\__pycache__\\",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\datos_graficos_14-04\\",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\datos_simulaciones\\",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\New folder\\",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\Parametros y supuestos simulacion\\",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\plots\\",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\protocolo-empresas\\",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\protocolo-empresas\\.git\\",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\protocolo-empresas\\base\\",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\protocolo-empresas\\datos_simulaciones\\",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\protocolo-empresas\\.Rhistory",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\protocolo-empresas\\analisis_resultados.R",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\protocolo-empresas\\correr_simulacion.py",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\protocolo-empresas\\protocolo-empresa.sublime-project",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\protocolo-empresas\\protocolo-empresa.sublime-workspace",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\protocolo-empresas\\README.md",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\protocolo-empresas\\simulaciones_eficiente.py",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\protocolo-empresas\\test.py",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\senama\\",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\.RData",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\.Rhistory",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\algoritmos.py",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\correr_simulacion.py",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\correr_simulacion_arauco.py",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\crear_tabla.R",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\documentacion_simulaciones.aux",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\documentacion_simulaciones.log",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\documentacion_simulaciones.pdf",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\documentacion_simulaciones.synctex.gz",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\documentacion_simulaciones.tex",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\flowchart_simulacion.pdf",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\flowchart_simulacion.pptx",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\flowchart_simulacion_en.pdf",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\GB prouesta Ac-Covid.pptx",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\individuo.py",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\individuo_test.ipynb",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\Paper screening covid 95%.docx",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\probabilidades_condicionales_escenarios.R",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\senama_pcr_probabilidad_infeccion.R",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\senama_probabilidad_infeccion.R",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\senama_r0_probabilidad_infeccion.R",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\simulaciones_algoritmo_bios.py",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\simulaciones_arauco.py",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\simulaciones_eficiente.py",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\simulaciones_protocolo_covid.sublime-project",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\simulaciones_protocolo_covid.sublime-workspace",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\simulaciones_v2.py",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\simulaciones_v3.py",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\simulador.py",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\tabla_con_cuarentena.png",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\tabla_infecciosos_trabajando.png",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\tabla_r0=2.png",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\tabla_sumario.png",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\TEST_DESVSTD.csv",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\transformar_datos.R",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\visualizar_simulaciones.R",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\visualizar_simulaciones_2.R",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\visualizar_simulaciones_3.R",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\visualizar_simulaciones_arauco.R",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\visualizar_simulaciones_v2.R",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\visualizar_simulaciones_v2_2.R",
+								"C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\visualizar_simulaciones_v3.R"
+							],
+							"dired_path": "C:\\Users\\Patricio Foncea\\Dropbox (MIT)\\CORONAVIRUS\\Protocolo de Empresas\\simulaciones_protocolo\\",
+							"dired_rename_mode": false,
+							"dired_stop_preview_thread": true,
+							"syntax": "Packages/FileBrowser/dired.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -336,17 +673,38 @@
 				0,
 				0,
 				1,
+				2
+			],
+			[
+				1,
+				0,
+				2,
+				2
+			],
+			[
+				2,
+				0,
+				3,
 				1
+			],
+			[
+				2,
+				1,
+				3,
+				2
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.326041666667,
+			0.652604166667,
 			1.0
 		],
 		"rows":
 		[
 			0.0,
+			0.5,
 			1.0
 		]
 	},
@@ -359,7 +717,7 @@
 	{
 		"height": 0.0
 	},
-	"pinned_build_system": "Packages/Python/Python.sublime-build",
+	"pinned_build_system": "",
 	"project": "protocolo-empresa.sublime-project",
 	"replace":
 	{
@@ -393,7 +751,7 @@
 		],
 		"width": 0.0
 	},
-	"selected_group": 0,
+	"selected_group": 1,
 	"settings":
 	{
 	},

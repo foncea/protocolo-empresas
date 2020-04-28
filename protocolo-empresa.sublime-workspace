@@ -1,0 +1,409 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"in",
+				"infeccioso"
+			],
+			[
+				"Simulador",
+				"SimuladorRoles"
+			],
+			[
+				"actu",
+				"actualizar_estados_actividades"
+			],
+			[
+				"actualizar_estados_act",
+				"actualizar_estados_actividades_roles"
+			],
+			[
+				"estados_ac",
+				"estados_actividades_roles"
+			],
+			[
+				"contar_est",
+				"contar_estado_actividad_rol"
+			],
+			[
+				"c",
+				"ctna_inic"
+			],
+			[
+				"cua",
+				"cuarentena_inicial"
+			],
+			[
+				"estaa",
+				"estados_actividades_df"
+			],
+			[
+				"activi",
+				"actividades_df"
+			],
+			[
+				"estado",
+				"estados_observados_df"
+			],
+			[
+				"lagg",
+				"lagged_infection_rate_beta"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "colo",
+		"selected_items":
+		[
+			[
+				"colo",
+				"UI: Select Color Scheme"
+			],
+			[
+				"col",
+				"UI: Select Color Scheme"
+			],
+			[
+				"color",
+				"UI: Select Color Scheme"
+			],
+			[
+				"rep",
+				"SublimeREPL: Python"
+			],
+			[
+				"setting",
+				"Preferences: Settings"
+			],
+			[
+				"ipyh",
+				"SublimeREPL: Python - IPython"
+			],
+			[
+				"setti",
+				"Preferences: Settings"
+			],
+			[
+				"sett",
+				"Preferences: Settings"
+			],
+			[
+				"settin",
+				"Preferences: Settings"
+			],
+			[
+				"ipyt",
+				"SublimeREPL: Python - IPython"
+			],
+			[
+				"python",
+				"SublimeREPL: Python"
+			],
+			[
+				"ipyth",
+				"SublimeREPL: Python - IPython"
+			],
+			[
+				"replipy",
+				"SublimeREPL: Python - IPython"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"shel",
+				"Set Syntax: Haskell"
+			],
+			[
+				"repl",
+				"SublimeREPL: Python"
+			],
+			[
+				"replip",
+				"SublimeREPL: Python - IPython"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"sehll",
+				"SublimeREPL: Shell"
+			],
+			[
+				"key",
+				"Preferences: Terminus Key Bindings"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"add re",
+				"Package Control: Add Repository"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"control",
+				"Package Control: List Packages"
+			],
+			[
+				"package control sa",
+				"Package Control: Satisfy Dependencies"
+			],
+			[
+				"repl:py",
+				"SublimeREPL: Python"
+			],
+			[
+				"repl:python",
+				"SublimeREPL: Python - IPython"
+			],
+			[
+				"sublimerepl:py",
+				"SublimeREPL: Python - Sublime Text Console"
+			],
+			[
+				"packages",
+				"Package Control: List Packages"
+			],
+			[
+				"select c",
+				"UI: Select Color Scheme"
+			],
+			[
+				"select color ",
+				"UI: Select Color Scheme"
+			],
+			[
+				"select ",
+				"UI: Select Color Scheme"
+			]
+		],
+		"width": 412.0
+	},
+	"console":
+	{
+		"height": 250.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/senama/simulador.py",
+		"/C/Users/Patricio Foncea/.jupyter/jupyter_notebook_config.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/algoritmos.py",
+		"/C/Users/Patricio Foncea/AppData/Roaming/Sublime Text 3/Packages/SublimeREPL/config/Python/ipy_repl.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/individuo.py",
+		"/C/Users/Patricio Foncea/AppData/Roaming/Sublime Text 3/Packages/User/SublimeREPL.sublime-settings",
+		"/C/Users/Patricio Foncea/AppData/Roaming/Sublime Text 3/Packages/SublimeREPL/SublimeREPL.sublime-settings",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/simulaciones_protocolo_covid.sublime-project",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/simulaciones_protocolo_covid.sublime-workspace",
+		"/C/Users/Patricio Foncea/AppData/Roaming/Sublime Text 3/Packages/User/dired.sublime-settings",
+		"/C/Users/Patricio Foncea/AppData/Roaming/Sublime Text 3/Packages/FileBrowser/dired.sublime-settings",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/covid19_policy_alliance/epi_models/seir.py",
+		"/C/Users/Patricio Foncea/AppData/Roaming/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/covid19_policy_alliance/demand-modeling/fatality_model/validation_death_predictor.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/covid19_policy_alliance/demand-modeling/fatality_model/linear_death_predictor.py",
+		"/C/Users/Patricio Foncea/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/covid19_policy_alliance/local/test_dummy_death_predictor.ipynb",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/covid19_policy_alliance/local/dummy_death_predictor.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/covid19_policy_alliance/local/test_dummy_death_predictor.py",
+		"/C/Users/Patricio Foncea/AppData/Roaming/Sublime Text 3/Packages/Package Control/Package Control.sublime-settings",
+		"/C/Users/Patricio Foncea/AppData/Roaming/Sublime Text 3/Packages/User/Package Control.sublime-settings",
+		"/C/Users/Patricio Foncea/AppData/Roaming/Sublime Text 3/Installed Packages/Solarized Color Scheme.sublime-package",
+		"/C/Users/Patricio Foncea/AppData/Roaming/Sublime Text 3/Installed Packages/Package Control.sublime-package",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CoronaVirus/CoronaVirus/visualization/Visualization_TP/processing_assignment.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CoronaVirus/CoronaVirus/experiments_hospital.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CoronaVirus/CoronaVirus/experiment_parameters.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CoronaVirus/CoronaVirus/pipeline.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CoronaVirus/CoronaVirus/structures.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CoronaVirus/CoronaVirus/test_routing_lp_copy.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CoronaVirus/CoronaVirus/simulator_copy.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CoronaVirus/CoronaVirus/visualization/Visualization_TP/processing_assignment_naive.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CoronaVirus/CoronaVirus/test_routing_lp.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CoronaVirus/CoronaVirus/random_close_simulator.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CoronaVirus/CoronaVirus/test_routing_lp - Copy.py",
+		"/C/Users/Patricio Foncea/AppData/Local/Programs/Python/Python37/Lib/site-packages/biogeme/models.py",
+		"/C/Users/Patricio Foncea/AppData/Local/Programs/Python/Python37/Lib/site-packages/biogeme/biogeme.py",
+		"/C/Users/Patricio Foncea/AppData/Local/Programs/Python/Python37/Lib/site-packages/biogeme/biogemebackup.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/PhD/Industry Project/2019 ABI/BIOGEME/01logit.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CoronaVirus/test_routing_lp.py",
+		"/C/Users/Patricio Foncea/AppData/Local/Programs/Python/Python37/Lib/site-packages/biogeme/__pycache__/loglikelihood.cpython-37.pyc"
+	],
+	"find":
+	{
+		"height": 24.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"browser",
+			"_G",
+			"indent",
+			"close",
+			"close-window",
+			"minimap",
+			"history"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"_M",
+			""
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 24.0
+	},
+	"input":
+	{
+		"height": 127.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": false,
+	"output.exec":
+	{
+		"height": 308.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Packages/Python/Python.sublime-build",
+	"project": "protocolo-empresa.sublime-project",
+	"replace":
+	{
+		"height": 44.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": false,
+	"side_bar_width": 226.0,
+	"status_bar_visible": false,
+	"template_settings":
+	{
+	}
+}

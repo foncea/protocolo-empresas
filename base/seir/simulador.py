@@ -17,7 +17,7 @@ class SimuladorBase:
         self.R0_poblacion = R0['poblacion']
 
         self.alpha = 1 / 2  #periodo de incubacion
-        self.gamma = 1 / 24 #periodo medio de infeccion
+        self.gamma = 1 / 22.5 #periodo medio de infeccion
         self.beta_poblacion = self.gamma * self.R0_poblacion
         self.beta_empresa = self.gamma * self.R0_empresa
         self.p_contagio_diaria = {'trabajo': 3 / 700 * self.beta_empresa,
@@ -40,6 +40,34 @@ class SimuladorBase:
         self.historia_numero_tests = [0]
 
     def crear_poblacion(self):
+        poblacion = dict()
+        for ind in range(self.tamano_poblacion):
+            probs = [self.probabilidad[self.S],
+                     self.probabilidad[self.E],
+                     self.probabilidad[self.I],
+                     self.probabilidad[self.R]]
+            estado_init = np.random.choice([self.S, self.E, self.I, self.R], 1, p=probs)
+
+            inicio_sintomas = min(np.random.lognormal(np.log(4.1) - 8 / 9, 4 / 3), 20) + 1
+            final_sintomas = inicio_sintomas + np.random.randint(7, 10)
+            duracion_infeccion = final_sintomas + np.random.randint(10, 14)
+            dia_muerte = final_sintomas - 1
+            dias_sintomas = [int(inicio_sintomas), int(final_sintomas)]
+
+            dia_aparicion_ac = 0
+            sintomatico = False
+            muere = False
+
+            if np.random.rand() < self.probabilidad['sintomatico']:
+                sintomatico = True
+                if np.random.rand() < self.probabilidad['muerte']:
+                    muere = True
+                
+            poblacion[ind] = Individuo(estado_init[0], ind, duracion_infeccion, dias_sintomas, dia_muerte, dia_aparicion_ac, sintomatico, muere)
+
+        return poblacion
+
+    def crear_poblacion2(self):
         poblacion = dict()
         for ind in range(self.tamano_poblacion):
             probs = [self.probabilidad[self.S],
@@ -98,7 +126,9 @@ class SimuladorBase:
         trabajando_enfermos = len(set(infecciosos) & set(trabajando))
         trabajando_susceptibles = max(len(set(susceptibles) & set(trabajando)), 1)
         
-        self.p_contagio_diaria['trabajo'] = self.beta_empresa * trabajando_enfermos / trabajando_susceptibles / 2 + self.p_contagio_diaria['cuarentena'] / 2
+        # self.p_contagio_diaria['trabajo'] = self.beta_empresa * trabajando_enfermos / trabajando_susceptibles / 2 + self.p_contagio_diaria['cuarentena'] / 2
+        self.p_contagio_diaria['trabajo'] = self.beta_empresa * trabajando_enfermos / len(trabajando) / 2 + self.p_contagio_diaria['cuarentena'] / 2
+        self.p_contagio_diaria['trabajo'] = self.p_contagio_diaria['trabajo'] if self.p_contagio_diaria['trabajo'] < 1/2 else 1/2 
 
         
     def tick(self):

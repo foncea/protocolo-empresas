@@ -4,16 +4,16 @@ import datetime
 
 # Parametros
 
-alg =           ['HacerNada', 'Bios', 'HacerNadaTurnos'] # 
-frec_test =     [0, 3, 0] * 2
+alg =           ['HacerNada', 'Bios', 'HacerNadaTurnos', 'HacerNadaCerrar'] # 
+frec_test =     [0, 3, 0, 0] * 2
 ctna_dur =      [14] * 12
 ctna_inic =     [0] * 6 
 pob =           [100] * 20
-r0 =            [3, 3, 3] * 20
+r0 =            [3] * 20
 tiempo =        [156] * 6
-iteraciones =   [500] * 20
-fecha =         ['30-04'] * 20
-p_i =           [0.01, 0.01, 0.01]  * 2
+iteraciones =   [50] * 20
+fecha =         ['02-05'] * 20
+p_i =           [0.0075, 0.0075, 0.0075]  * 2
 
 # Correr simulaciones de escenarios
 

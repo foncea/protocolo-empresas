@@ -62,7 +62,7 @@ def dict_prob(ps, pe, pi, pr, psinto, pm, p_cont):
     return {'susceptible': ps, 'expuesto': pe, 'infeccioso': pi, 'recuperado': pr, 'sintomatico': psinto, 'muerte': pm, 'contagio_diaria': p_cont}
 
 # Parametros y precision maxima del test
-esp = [0.97]
+esp = [1]#[0.97]
 sen = [0.93]
 dia_aparicion_ac = [[7, 12]]
 def dict_prec_test(eg, sg, em, sm, dias_ac):
@@ -82,7 +82,7 @@ def dict_prec_test(e, s, dias_ac):
 
 # Parametros poblacion
 tamano_poblacion = [int(sys.argv[5])]
-R0 = [{'empresa': int(sys.argv[6]), 'poblacion': 2}]   #R0_empresa
+R0 = [{'empresa': float(sys.argv[6]), 'poblacion': 1.6}]   #R0_empresa
 
 # Parametros algoritmo
 lista_algoritmos = {'Bios': lambda x: AlgoritmoBios(x[0], x[1]),
@@ -135,7 +135,7 @@ u = 1
 cv =  lambda x: np.std(x) / np.mean(x) / np.sqrt(len(x))
 def umbral_cv(n, df, u):
     aux = df.copy()
-    aux[['estado', 'estado_observado', 'actividad']] = pd.DataFrame(aux.index.tolist(), index=resultados_df.index)
+    aux[['estado', 'estado_observado', 'actividad', 'sintomas']] = pd.DataFrame(aux.index.tolist(), index=resultados_df.index)
     infecciones = aux[(aux['estado'] == 'infeccioso') & (aux['tiempo'] % 26 == 0)].groupby(['it'])[0].agg('sum')
     trabajando = aux[aux['actividad'] == 'trabajo'].groupby(['it'])[0].agg('mean')
     infecciones_cv = cv(infecciones) < (u / 100)
@@ -153,10 +153,11 @@ for p in parametros:
         sim.df_estados_actividades_obs['it'] = n
         resultados_df = pd.concat([resultados_df, sim.df_estados_actividades_obs], axis=0)
         numero_tests[n] = sim.historia_numero_tests 
+        numero_infecciosos = sim.numero_infectados_totales
 
         alg.reset()
 
-        if (n>1000) and n % 500 == 0:
+        if False:#(n>1000) and n % 500 == 0:
             print('Iteración: ' + str(n))
             if umbral_cv(n, resultados_df, u):
                 print('Cv = menor a ' + str(u) + '%')
@@ -173,8 +174,10 @@ fecha = sys.argv[9]
 p_i = sys.argv[10]
 sufijo = '_' + alg + '_frec=' + frec + '_pob=' + pob + '_cinic=' + cinic + '_r0=' + r0 + '_pi=' + p_i + '_iter=' + iteraciones + '_' + fecha 
 
-resultados_df[['estado', 'estado_observado', 'actividad', 'sintomas']] = pd.DataFrame(resultados_df.index.tolist(), index=resultados_df.index)
-resultados_df.to_csv('datos_simulaciones/resultados' + sufijo + '.csv')
-pd.DataFrame.from_dict(numero_tests).T.reset_index().to_csv('datos_simulaciones/numero_tests' + sufijo + '.csv')
+resultados_df[['estado', 'estado_observado', 'actividad', 'sintomas']] = pd.DataFrame(resultados_df.index.tolist(), index=resultados_df.index)  
+resultados_df.rename(columns={0: 'cantidad'}).to_csv('../datos_simulaciones/resultados' + sufijo + '.csv', index=False)
+
+pd.DataFrame.from_dict(numero_tests).T.reset_index().to_csv('../datos_simulaciones/numero_tests' + sufijo + '.csv')
+pd.DataFrame.from_dict(numero_infecciosos).T.reset_index().to_csv('../datos_simulaciones/numero_infecciosos' + sufijo + '.csv')
 
 #print('Resultados guardados en disco')

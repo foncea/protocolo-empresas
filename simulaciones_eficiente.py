@@ -130,6 +130,7 @@ resultados_simulacion = []
 
 resultados_df = pd.DataFrame()
 numero_tests = {}
+numero_infecciosos = {}
 u = 1
 
 cv =  lambda x: np.std(x) / np.mean(x) / np.sqrt(len(x))
@@ -153,7 +154,7 @@ for p in parametros:
         sim.df_estados_actividades_obs['it'] = n
         resultados_df = pd.concat([resultados_df, sim.df_estados_actividades_obs], axis=0)
         numero_tests[n] = sim.historia_numero_tests 
-        numero_infecciosos = sim.numero_infectados_totales
+        numero_infecciosos[n] = sim.numero_infectados_totales
 
         alg.reset()
 

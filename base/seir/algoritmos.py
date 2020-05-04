@@ -12,7 +12,7 @@ class AlgoritmoBios:
         
         self.numero_tests = 0
         
-        self.tiempo_pcr = 1  #agregar como precision test
+        self.tiempo_pcr = 4  #agregar como precision test
     
     def reset(self):
         self.numero_tests = 0

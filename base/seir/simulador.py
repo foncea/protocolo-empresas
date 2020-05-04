@@ -16,7 +16,7 @@ class SimuladorBase:
         self.R0_empresa = R0['empresa']
         self.R0_poblacion = R0['poblacion']
 
-        self.alpha = 1 / 2  #periodo de incubacion
+        self.alpha = 1 / 3  #periodo de incubacion
         self.gamma = 1 / 22.5 #periodo medio de infeccion
         self.beta_poblacion = self.gamma * self.R0_poblacion
         self.beta_empresa = self.gamma * self.R0_empresa

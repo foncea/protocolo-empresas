@@ -1,19 +1,20 @@
 
 # Parametros simulacion
     
-alg =           c('HacerNada', 'Bios', 'HacerNadaTurnos', 'HacerNadaCerrar')#
+alg =           c('HacerNada', 'Bios', 'HacerNadaTurnos', 'HacerNadaCerrar')
+                 # 'HacerNada', 'Bios', 'HacerNadaTurnos', 'HacerNadaCerrar')#
                   # 'HacerNada', 'Bios', 'HacerNadaTurnos')
                   #'HacerNadaPCR', 'BiosPCR', 'HacerNadaTurnosPCR') 
 frec_test =     rep(c(0, 3, 0, 0), 20) 
 ctna_dur =      rep(14, 60)
 ctna_inic =     rep(0, 12)
 pob =           rep(100, 60)
-r0 =            c(3,3,3,3,2.5,2.5,2.5)#rep(1, 60)
+r0 =            c(3,3,3,3)#rep(1, 60)
 tiempo =        rep(156, 60)
-iteraciones =   rep(50, 60)
-fecha =         rep('02-05', 60)
+iteraciones =   rep(3000, 60)
+fecha =         rep('04-05', 60)
 p_inic =        c(0.0075, 0.0075,  0.0075, 0.0075, 0.0075,  0.0075, 0, 0, 0, 0, 0, 0)
-nombre =        rep(c('Hacer Nada', 'Anticuerpos cada 3 Días', 'Turnos de 2 Semanas', 'Cerrar'), 20)
+nombre =        rep(c('No Protocol', 'ABT 3', 'Shift 14', 'Shut Down'), 20)
 pcr =           c('1. Sin-PCR', '1. Sin-PCR', '1. Sin-PCR', 
                   '2. PCR Inicial', '2. PCR Inicial', '2. PCR Inicial',
                   '3. PCR Inicial y Contagio', '3. PCR Inicial y Contagio', '3. PCR Inicial y Contagio')
@@ -24,11 +25,12 @@ library(ggplot2)
 library(tidyr)
 library(dplyr)
 library(rlang)
-library(formattable)
+#library(formattable)
 library(gridExtra)
 library(viridis)
 library(latex2exp)
 library(forecast)
+library(xtable)
 
 ################################################################################
 
@@ -297,7 +299,7 @@ tot_infecciones %>%
 
 p = tot_infecciones %>%
     mutate(Protocolo = factor(Protocolo, levels=nombre[c(3,2,4,1)])) %>%
-    ggplot(aes(x=R0, y=Total_Inf / pob[1], fill=Protocolo)) +
+    ggplot(aes(x=Protocolo, y=Total_Inf / pob[1], fill=Protocolo)) +
     geom_bar(stat='identity', position='dodge', color='black') +
     ggtitle('Porcentaje de Enfermos Totales en 5 Meses') +
     ylab('') + 
@@ -308,7 +310,7 @@ p = tot_infecciones %>%
     geom_text(aes(label=percent(Total_Inf / pob[1], digits=1)), position=position_dodge(width=0.9), vjust=-0.25) 
 p
 }
-ggsave(paste('../plots/resultados_30-04/v3/Porcentaje infecciosos totales.pdf', sep=''), p)
+ggsave(paste('../plots/resultados_04-05/Porcentaje infecciosos totales.pdf', sep=''), p)
 
 ################################################################################
 
@@ -346,7 +348,7 @@ p1 = dias_infecciosos %>%
     mutate(Protocolo = factor(Protocolo, levels=nombre[c(3,2,4,1)])) %>%
     ggplot(aes(x=Protocolo, y=Dias_Inf, fill=Protocolo)) +
     geom_bar(stat='identity', position='dodge', color='black') +
-    ggtitle('Días-Hombre Infectados en el Trabajo') +
+    ggtitle('Working-Days Infected at Work (5 Months, 100 Workers)') +
     ylab('') + 
     xlab('') +
     #xlab(TeX("$R_0$")) + 
@@ -360,7 +362,7 @@ p = merge(tot_infecciones, dias_infecciosos, by=c('Protocolo', 'R0')) %>%
     mutate(Protocolo = factor(Protocolo, levels=nombre[c(3,2,4,1)])) %>%
     ggplot(aes(x=Protocolo, y=Dias_Promedio_Extraccion, fill=Protocolo)) +
     geom_bar(stat='identity', position='dodge', color='black') +
-    ggtitle('Días Promedio entre Infección de Trabajador y Recomendación de Cuarentena') +
+    ggtitle('Average number of days between infection and quarantine') +
     ylab('') + 
     xlab('') +
     #xlab(TeX('$R_0$')) +
@@ -369,8 +371,8 @@ p = merge(tot_infecciones, dias_infecciosos, by=c('Protocolo', 'R0')) %>%
     geom_text(aes(label=round(Dias_Promedio_Extraccion, digits=1)), position=position_dodge(width=0.9), vjust=-0.25) 
 p
 }
-ggsave(paste('../plots/resultados_30-04/v3/Dias promedio entre infeccion y cuarentena.pdf', sep=''), p)
-ggsave(paste('../plots/resultados_30-04/v3/Dias-hombre Infectados en Trabajo.pdf', sep=''), p1)
+ggsave(paste('../plots/resultados_04-05/Dias promedio entre infeccion y cuarentena.pdf', sep=''), p)
+ggsave(paste('../plots/resultados_04-05/Dias-hombre Infectados en Trabajo.pdf', sep=''), p1)
 
 ################################################################################
 # Fraccion de tiempo sin empleados enfermos
@@ -408,7 +410,7 @@ p = fraccion_tiempo %>%
         mutate(Protocolo = factor(Protocolo, levels=nombre[c(3,2,4,1)])) %>%
         ggplot(aes(x=Protocolo, y=percent(fraccion_tiempo, digits=1), fill=Protocolo)) +
         geom_bar(stat='identity', position='dodge', color='black') +
-        ggtitle('Fraccion de Días sin Trabajadores Enfermos') +
+        ggtitle('Fraction of Days with at least one infected worker at work') +
         ylab('') + 
         scale_y_continuous(labels = scales::percent) +
         xlab('') + 
@@ -419,7 +421,7 @@ p = fraccion_tiempo %>%
         theme_bw()
 p
 }
-ggsave(paste('../plots/resultados_30-04/v3/Fraccion dias sin trabajadores infectados.pdf', sep=''), p)
+ggsave(paste('../plots/resultados_04-05/Fraccion dias sin trabajadores infectados.pdf', sep=''), p)
 
 ################################################################################
 # Poblacion trajando
@@ -477,7 +479,7 @@ ggsave(paste('../plots/resultados_30-04/v3/Fraccion dias sin trabajadores infect
                SD = round(STD, 1)) %>%
         select(Protocolo, Infecciosos_Totales, CV, SD, Trabajando) %>%
         arrange(Infecciosos_Totales) 
-        formattable(digits=0)
+        # formattable(digits=0)
 }
 ggsave(paste('plots/mega_27-04/Porcentaje de trabajadores.pdf', sep=''), p)
 
@@ -554,16 +556,161 @@ ggsave(paste('plots/mega_27-04/Porcentaje de trabajadores.pdf', sep=''), p)
         mutate(Protocolo = factor(Protocolo, levels=nombre[rev(c(2, 3, 4, 1))])) %>%
         ggplot(aes(x=tiempo, y=Inf_Trab * 100, color=Protocolo)) +
         geom_line(size=1) +
+        ggtitle('Number of infected working at a given day at as a percentage of total workers') +
+        ylab('') + 
+        xlab('Days') +
+        #geom_ribbon(aes(ymin=100*(Inf_Trab - desv/8), ymax=100*(Inf_Trab + desv/8)),alpha=0.3) +
+        theme_bw() +
+        #facet_wrap(~factor(R0)) + 
+        scale_y_continuous(labels = scales::percent) 
+    p
+}
+ggsave(paste('../plots/resultados_04-05/Infectados en el trabajo cuarto desv iter=5000.pdf', sep=''), p)
+
+################################################################################
+# Poblacion infectada trabajando
+{
+    n=1
+    sim = paste('_' , alg[n] , '_frec=' , frec_test[n] , '_pob=' , pob[n] , '_cinic=', ctna_inic[n], '_r0=' , r0[n] , '_pi=', p_inic[n], '_iter=' , iteraciones[n], '_' , fecha[n] , sep='')
+    
+    resultados = read.csv(paste('../datos_simulaciones/resultados', sim, '.csv', sep='')) %>%
+        filter(tiempo %in% c(60, 90, 120,150))
+        
+    resultados$X = NULL
+    
+    tiempo = rep(c(60,90,120,150), iteraciones[n])
+    it = rep(0:(iteraciones[n]-1), each=4)
+    aux2 = data.frame(tiempo, it)
+    aux2$actividad = 'trabajo'
+    aux2$estado = 'infeccioso'
+    aux2$cantidad = 0
+    
+    trabajando_inf = resultados %>%
+        select(it, tiempo, estado, actividad, cantidad) %>%
+        filter(actividad == 'trabajo') %>%
+        rbind(aux2) %>%
+        group_by(it, tiempo) %>%
+        mutate(trabajando = sum(cantidad)) %>%
+        filter(estado == 'infeccioso') %>%
+        group_by(tiempo, it) %>%
+        summarize(cantidad = sum(cantidad), trabajando = first(trabajando)) %>%
+        mutate(trabajando = max(trabajando, 1), Inf_Trab = cantidad / trabajando) %>%
+        # group_by(tiempo) %>%
+        # summarize(Inf_Trab = mean(cantidad / trabajando), 
+        #            desv = sd(cantidad / trabajando), 
+        #           # q25 = quantile(cantidad / trabajando, 0.25),
+        #           # q75 = quantile(cantidad / trabajando, 0.75),
+        #           # q05 = quantile(cantidad / trabajando, 0.05),
+        #           # q95 = quantile(cantidad / trabajando, 0.95),
+        #           # q10 = quantile(cantidad / trabajando, 0.1),
+        #           # q90 = quantile(cantidad / trabajando, 0.9)
+        #           ) %>%
+        mutate(Protocolo = nombre[n], PCR = pcr[n], R0 = r0[n])
+    
+    for(n in 2:length(alg)){
+        sim = paste('_' , alg[n] , '_frec=' , frec_test[n] , '_pob=' , pob[n] , '_cinic=', ctna_inic[n], '_r0=' , r0[n] , '_pi=', p_inic[n], '_iter=' , iteraciones[n], '_' , fecha[n] , sep='')
+        
+        resultados = read.csv(paste('../datos_simulaciones/resultados', sim, '.csv', sep='')) %>%
+            filter(tiempo %in% c(60, 90, 120,150))
+        resultados$X = NULL
+        
+        aux =  resultados %>%
+            filter(actividad == 'trabajo') %>%
+            select(it, tiempo, estado, actividad, cantidad) %>%
+            rbind(aux2) %>%
+            group_by(it, tiempo) %>%
+            mutate(trabajando = sum(cantidad)) %>%
+            filter(estado == 'infeccioso') %>%
+            group_by(tiempo, it) %>%
+            summarize(cantidad = sum(cantidad), trabajando = first(trabajando)) %>%
+            mutate(trabajando = max(trabajando, 1), Inf_Trab = cantidad / trabajando) %>%
+            # group_by(tiempo) %>%
+            # summarize(Inf_Trab = mean(cantidad / trabajando), 
+            #           desv = sd(cantidad / trabajando), 
+            #           # q25 = quantile(cantidad / trabajando, 0.25),
+            #           # q75 = quantile(cantidad / trabajando, 0.75),
+            #           # q05 = quantile(cantidad / trabajando, 0.05),
+            #           # q95 = quantile(cantidad / trabajando, 0.95),
+            #           # q10 = quantile(cantidad / trabajando, 0.1),
+            #           # q90 = quantile(cantidad / trabajando, 0.9)
+            #           ) %>%
+            mutate(Protocolo = nombre[n], PCR = pcr[n], R0 = r0[n])
+        
+        trabajando_inf = rbind(trabajando_inf, aux)
+    }
+    
+    trabajando_inf[trabajando_inf$tiempo == 0, 'Inf_Trab'] = 0.01
+    
+    trabajando_inf %>%
+        group_by(Protocolo, tiempo, Inf_Trab) %>%
+        summarize(count = n()) %>%
+        group_by(Protocolo, tiempo) %>%
+        arrange(Inf_Trab) %>%
+        mutate(cumulative = cumsum(count)) %>%
+        mutate(cumulative = cumulative / max(cumulative)) %>%
+        ungroup %>%
+        mutate(Protocolo = factor(Protocolo, levels=nombre[rev(c(2, 3, 4, 1))])) %>%
+        ggplot(aes(x=Inf_Trab, y=cumulative, color=Protocolo)) + 
+            geom_line() +
+            #geom_histogram(aes(y=count), binwidth=0.001,  position='dodge') +
+        ylab('Cumulative Density Function') + 
+        xlab('Infected as a Percentage of Individuals at Work') +
+            #xlim(c(0,0.16)) +
+            theme_bw() +
+            scale_fill_brewer(palette='Dark2') +
+            theme(legend.title = element_blank()) +
+            facet_wrap(~factor(tiempo)) +
+            scale_x_continuous(labels = scales::percent, limits=c(0,0.16))
+    
+    table = trabajando_inf %>%
+        group_by(Protocolo, tiempo) %>%
+        summarize(Mean = scales::label_percent(accuracy=0.01)(mean(Inf_Trab)), SD = scales::scientific(sd(Inf_Trab), num=3)) %>%
+        gather(stat, value, Mean:SD) %>%
+        rename(Days = tiempo, Protocol = Protocolo) %>%
+        arrange(Protocol, Days) %>% 
+        #unite(Stats, Mean, SD) %>%
+        spread(key=Days, value=value)
+    table
+    
+    trabajando_inf %>%
+        group_by(Protocolo, tiempo) %>%
+        summarize(Mean = mean(Inf_Trab), SD = sd(Inf_Trab)) %>%
+        gather(stat, value, Mean:SD) %>%
+        rename(Days = tiempo, Protocol = Protocolo) %>%
+        arrange(Protocol, Days) %>% 
+        #unite(Stats, Mean, SD) %>%
+        spread(key=Days, value=value)
+        
+    p = trabajando_inf %>%
+        mutate(Protocolo = factor(Protocolo, levels=nombre[rev(c(1,4,2,3))])) %>%
+        ggplot(aes(x=scales::label_percent()(Inf_Trab), color=factor(Protocolo))) +
+        geom_histogram(aes(y=..density..), binwidth=0.001,  position='dodge') +
+        #geom_step(aes(len=len,y=..y.. * len),stat="ecdf") +
+        geom_density(alpha=0.3, size=1) +
+        #ggtitle('Infectados Total al día por cada 100 Trabajadores ') +
+        ylab('Cumulative Density Function') + 
+        xlab('Infected as a Percentage of Individuals at Work') +
+        # lim(c(0,60)) +
+        theme_bw() +
+        scale_fill_brewer(palette='Dark2') +
+        theme(legend.title = element_blank()) +
+        facet_wrap(~factor(tiempo)) 
+    p
+    
+    p = trabajando_inf %>%
+        mutate(Protocolo = factor(Protocolo, levels=nombre[rev(c(2, 3, 4, 1))])) %>%
+        ggplot(aes(x=tiempo, y=Inf_Trab * 100, color=Protocolo)) +
+        geom_line(size=1) +
         ggtitle('Trabajadores Infectados al día por cada 100 Trabajadores') +
         ylab('') + 
         xlab('Días') +
-        #geom_ribbon(aes(ymin=100*(Inf_Trab - desv/8), ymax=100*(Inf_Trab + desv/8)),alpha=0.3) +
+        geom_ribbon(aes(ymin=100*(Inf_Trab - desv/8), ymax=100*(Inf_Trab + desv/8)),alpha=0.3) +
         theme_bw()
-        #facet_wrap(~factor(R0)) + 
-        #scale_y_continuous(labels = scales::percent) 
+    #facet_wrap(~factor(R0)) + 
+    #scale_y_continuous(labels = scales::percent) 
     p
 }
-ggsave(paste('../plots/resultados_30-04/v3/Infectados en el trabajo sin desv iter=5000.pdf', sep=''), p)
+ggsave(paste('../plots/resultados_04-05/Infectados en el trabajo cuarto desv iter=5000.pdf', sep=''), p)
 
 ################################################################################
 # Numero de PCR
@@ -753,6 +900,81 @@ ggsave(paste('plots/senama_24-04/Numero Test PCR.pdf', sep=''), p)
     #scale_y_continuous(labels = scales::percent) 
     p
 }
+ggsave(paste('../plots/resultados_28-04/Infectados totales (no porcentajes) iter=200.pdf', sep=''), p)
+
+################################################################################
+# Poblacion infectada total
+{
+    n=1
+    sim = paste('_' , alg[n] , '_frec=' , frec_test[n] , '_pob=' , pob[n] , '_cinic=', ctna_inic[n], '_r0=' , r0[n] , '_pi=', p_inic[n], '_iter=' , iteraciones[n], '_' , fecha[n] , sep='')
+    
+    resultados = read.csv(paste('../datos_simulaciones/numero_infecciosos', sim, '.csv', sep='')) %>%
+        gather(tiempo, infecciosos, X0:X156) %>%
+        mutate(tiempo = as.numeric(substr(tiempo, 2, 100)),
+               Protocolo = nombre[n], PCR = pcr[n], R0 = r0[n]) %>%
+        select(-index)
+    
+    for(n in 2:length(alg)){
+        sim = paste('_' , alg[n] , '_frec=' , frec_test[n] , '_pob=' , pob[n] , '_cinic=', ctna_inic[n], '_r0=' , r0[n] , '_pi=', p_inic[n], '_iter=' , iteraciones[n], '_' , fecha[n] , sep='')
+        
+        aux = read.csv(paste('../datos_simulaciones/numero_infecciosos', sim, '.csv', sep='')) %>%
+            gather(tiempo, infecciosos, X0:X156) %>%
+            mutate(tiempo = as.numeric(substr(tiempo, 2, 100)),
+                   Protocolo = nombre[n], PCR = pcr[n], R0 = r0[n]) %>%
+            select(-index)
+        
+        resultados = rbind(resultados, aux)
+    }
+    
+    p = resultados %>%
+        filter(tiempo %in% c(60, 90, 120, 150)) %>%
+        ggplot(aes(x=infecciosos, fill=factor(tiempo))) +
+        #geom_histogram(aes(y=..density..), binwidth=1,  position='dodge') +
+        geom_density(alpha=0.3) +
+        #ggtitle('Infectados Total al día por cada 100 Trabajadores ') +
+        ylab('') + 
+        #xlab('Dias') +
+        theme_bw() +
+        facet_wrap(~factor(Protocolo)) +
+        scale_x_continuous(labels = scales::percent) 
+    p
+    p = resultados %>%
+        filter(tiempo %in% c(60, 90, 120, 150)) %>%
+        mutate(Protocolo = factor(Protocolo, levels=nombre[rev(c(1,4,2,3))])) %>%
+        ggplot(aes(x=infecciosos/100, color=factor(Protocolo))) +
+        #geom_histogram(aes(y=..density..), binwidth=1,  position='dodge') +
+        #geom_step(aes(len=len,y=..y.. * len),stat="ecdf") +
+        geom_density(alpha=0.3, size=1) +
+        #ggtitle('Infectados Total al día por cada 100 Trabajadores ') +
+        ylab('Probability Density Function') + 
+        xlab('Number of Infected Individuals') +
+        theme_bw() +
+        scale_fill_brewer(palette='Dark2') +
+        scale_x_continuous(labels = scales::percent, limits=c(0,0.5)) +
+        theme(legend.title = element_blank()) +
+        facet_wrap(~factor(tiempo)) 
+    p
+    ggsave(paste('../plots/resultados_28-04/Infectados totales (no porcentajes) iter=200.pdf', sep=''), p)
+    
+    table_sum = resultados %>%
+        filter(tiempo %in% c(60, 90, 120, 150)) %>%
+        group_by(tiempo, Protocolo) %>%
+        summarize(Mean = mean(infecciosos), SD = sd(infecciosos)) %>%
+        gather(stat, value, Mean:SD) %>%
+        rename(Days = tiempo, Protocol = Protocolo) %>%
+        arrange(Protocol, Days) %>%
+        #unite(Stats, Mean, SD) %>%
+        spread(key=Days, value=value) 
+        
+    
+    
+    
+}
+
+
+
+
+
 ggsave(paste('../plots/resultados_28-04/Infectados totales (no porcentajes) iter=200.pdf', sep=''), p)
 
 

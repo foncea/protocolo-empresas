@@ -14,14 +14,14 @@ pi = 0.01
 iter = 1000
 
 
-seir = read.csv(paste('seir_r0=', r0, '_pi=', pi, '_03-05.csv', sep='')) 
+seir = read.csv(paste('seir_r0=', r0, '_pi=', pi, '_04-05.csv', sep='')) 
 colnames(seir) = c('Susceptible', 'Exposed', 'Infected', 'Recovered')
 seir = seir %>%
     mutate(Days = as.numeric(rownames(seir)) / 100) %>%
     gather(Compartment, cantidad, -Days) %>%
     mutate(cantidad = cantidad * 100)
 p_seir = seir %>%
-    ggplot(aes(x=Days, y=cantidad * 100, color=Compartment )) +
+    ggplot(aes(x=Days * 100, y=cantidad, color=Compartment )) +
         geom_line() + 
         xlab('Days') + 
         ylab('') +
@@ -44,8 +44,9 @@ p_sim = seir_sim %>%
         xlab('Days') + 
         ylab('') +
         ggtitle(paste('Simulacion - R0=', r0, sep=''))
+p_sim
 
-ggsave(paste('SEIR r0=', r0, ' pi=', pi, ' ', '02-05.pdf', sep=''), p_seir)
+ggsave(paste('SEIR r0=', r0, ' pi=', pi, ' ', '04-05.pdf', sep=''), p_seir)
 ggsave(paste('SIMULACION r0=', r0, ' pi=', pi, 'iter=', iter, ' ', '02-05.pdf', sep=''), p_sim)
 
 

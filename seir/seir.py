@@ -26,8 +26,8 @@ dt = 1
 t = np.linspace(0, t_max, int(t_max/dt) + 1)
 
 init_vals = 1 - float(sys.argv[1]), 0, float(sys.argv[1]), 0
-alpha = 1 / 3.1
-gamma = 1 / 22.5
+alpha = 1 / 3
+gamma = 1 / 17
 beta = float(sys.argv[2]) * gamma
 params = alpha, beta, gamma
 

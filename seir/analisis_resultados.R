@@ -28,7 +28,7 @@ p_seir = seir %>%
         ggtitle(paste('SEIR Model - R0=', r0, sep=''))
 p_seir
 
-seir_sim = read.csv(paste('simulacion_seir_r0=', r0, '_pi=', pi, '_iter=', iter, '_02-05.csv', sep='')) %>%
+seir_sim = read.csv(paste('simulacion_seir_r0=', r0, '_pi=', pi, '_iter=', iter, '_12-05.csv', sep='')) %>%
     select(tiempo, it, estado, cantidad) %>%
     group_by(tiempo, estado) %>%
     summarize(cantidad = sum(cantidad) / iter)

@@ -139,7 +139,7 @@ class Individuo:
         if (self.estado == 'susceptible') and (random.rand() < prob_inf):
             self.enfermar()
 
-        if (self.estado == 'expuesto') and (self.tiempo - self.tiempo_inicio_infeccion >= self.dias_sintomas[0] - 2):
+        if (self.estado == 'expuesto') and (self.tiempo - self.tiempo_inicio_infeccion >= self.dias_sintomas[0]):
             self.estado = 'infeccioso'
 
         self.cuarentena_nacional = False

@@ -12,7 +12,7 @@ pob =           [100] * 20
 r0 =            [2] * 20
 tiempo =        [156] * 6
 iteraciones =   [1000] * 20
-fecha =         ['02-05'] * 20
+fecha =         ['12-05'] * 20
 p_i =           [0.01, 0.01, 0.01]  * 2
 
 # Correr simulaciones de escenarios

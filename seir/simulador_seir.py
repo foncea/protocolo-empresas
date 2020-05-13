@@ -37,9 +37,10 @@ class SimuladorBase:
                      self.probabilidad[self.R]]
             estado_init = np.random.choice([self.S, self.E, self.I, self.R], 1, p=probs)
 
-            inicio_sintomas = min(np.random.lognormal(np.log(4.1) - 8 / 9, 4 / 3), 20) + 1
-            final_sintomas = inicio_sintomas + np.random.randint(7, 10)
-            duracion_infeccion = final_sintomas + np.random.randint(10, 14)
+            inicio_sintomas = 3#np.random.uniform(low=2, high=4)  #min(np.random.lognormal(np.log(4.1) - 8 / 9, 4 / 3), 20) + 1
+            final_sintomas = inicio_sintomas + 17#np.random.uniform(low=15, high=19)
+                                                                 
+            duracion_infeccion = final_sintomas + 0#np.random.randint(10, 14)
             dia_muerte = final_sintomas - 1
             dias_sintomas = [int(inicio_sintomas), int(final_sintomas)]
 
@@ -65,9 +66,9 @@ class SimuladorBase:
                      self.probabilidad[self.R]]
             estado_init = np.random.choice([self.S, self.E, self.I, self.R], 1, p=probs)
 
-            inicio_sintomas = min(np.random.lognormal(np.log(4) - 8 / 9, 4 / 3), 14) + 1
-            final_sintomas = inicio_sintomas + np.random.randint(7, 14)
-            duracion_infeccion = final_sintomas + np.random.randint(10, 14)
+            inicio_sintomas = 3 #min(np.random.lognormal(np.log(4) - 8 / 9, 4 / 3), 14) + 1
+            final_sintomas = inicio_sintomas + np.random.exponential(7, 14)
+            duracion_infeccion = final_sintomas + 0
             dia_muerte = final_sintomas - 1
             dias_sintomas = [int(inicio_sintomas), int(final_sintomas)]
 

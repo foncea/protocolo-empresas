@@ -4,16 +4,17 @@ import datetime
 
 # Parametros
 
-alg =           ['HacerNada', 'Bios', 'HacerNadaTurnos', 'HacerNadaCerrar'] # 
-frec_test =     [0, 3, 0, 0] * 2
+alg =           ['HacerNada']#'Bios', 'Bios', 'Bios', 'Bios'] # 
+frec_test =     [0, 3, 3, 3] * 2
 ctna_dur =      [14] * 12
 ctna_inic =     [0] * 6 
 pob =           [100] * 20
 r0 =            [3] * 20
 tiempo =        [156] * 6
 iteraciones =   [3000] * 20
-fecha =         ['11-05'] * 20
-p_i =           [0.02, 0.02, 0.02, 0.02]  * 2
+fecha =         ['14-05'] * 20
+p_i =           [0.0075, 0.0075, 0.0075]  * 2
+adherencia =    [1, 0.5, 0.8, 1]
 
 # Correr simulaciones de escenarios
 
@@ -21,7 +22,7 @@ print('\n=============== Simulaciones ===============\n\n')
 
 for n in range(len(alg)):
     t0 = time.time()
-    argumentos = alg[n] + ' ' + str(frec_test[n]) + ' ' + str(ctna_dur[n]) + ' ' + str(ctna_inic[n]) + ' ' + str(pob[n]) + ' ' + str(r0[n]) + ' ' + str(tiempo[n]) + ' ' + str(iteraciones[n]) + ' ' + fecha[n] + ' ' + str(p_i[n])
+    argumentos = alg[n] + ' ' + str(frec_test[n]) + ' ' + str(ctna_dur[n]) + ' ' + str(ctna_inic[n]) + ' ' + str(pob[n]) + ' ' + str(r0[n]) + ' ' + str(tiempo[n]) + ' ' + str(iteraciones[n]) + ' ' + fecha[n] + ' ' + str(p_i[n]) + ' ' + str(adherencia[n])
     print(argumentos)
 
     os.system("python simulaciones_eficiente.py " + argumentos)

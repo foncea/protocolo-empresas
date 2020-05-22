@@ -4,6 +4,7 @@ class AlgoritmoBios:
     def __init__(self, cuarentena, frecuencia_test):
         self.algoritmo_id = 'anticuerpos'
         self.frecuencia_test = frecuencia_test
+        self.cuarentena = cuarentena
         self.duracion_cuarentena = cuarentena['duracion']
         self.cuarentena_inicial = cuarentena['inicial']
 

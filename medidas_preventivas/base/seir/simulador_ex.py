@@ -42,7 +42,7 @@ class SimuladorBase:
 
             inicio_sintomas = min(np.random.lognormal(np.log(4.1) - 8 / 9, 4 / 3), 20) + 1
             final_sintomas = inicio_sintomas + np.random.randint(7, 10)
-            duracion_infeccion = final_sintomas + np.random.randint(0, 1)
+            duracion_infeccion = final_sintomas + np.random.randint(5, 10)
             dia_muerte = final_sintomas - 1
             dias_sintomas = [int(inicio_sintomas), int(final_sintomas)]
 
@@ -317,3 +317,58 @@ class SimuladorFamilias(SimuladorRoles):
         self.contar_estado_actividad_rol()
 
 
+class Simulador2(SimuladorBase):
+    def __init__(self, tamano_poblacion, precision_tests, probabilidad, duracion_infeccion, R0):
+        self.tamano_poblacion = tamano_poblacion
+        self.precision_tests = precision_tests
+        self.probabilidad = probabilidad
+        self.S = 'susceptible'
+        self.E = 'expuesto'
+        self.I = 'infeccioso'
+        self.R = 'recuperado'
+        self.duracion_infeccion = duracion_infeccion
+        self.R0_empresa = R0['empresa']
+        self.R0_poblacion = R0['poblacion']
+
+        self.alpha = 1 / 3  #periodo de incubacion
+        self.gamma = 1 / 17.5 #periodo medio de infeccion
+        self.beta_poblacion = self.gamma * self.R0_poblacion
+        self.beta_empresa = self.gamma * self.R0_empresa
+        self.p_contagio_diaria = {'trabajo': 3 / 700 * self.beta_empresa,
+                                  'cuarentena': 3 / 700 * self.beta_poblacion / 2}
+        
+        self.tiempo = 0
+
+        self.poblacion = self.crear_poblacion()
+
+        self.historia_numero_tests = [0]
+        self.historia_infectados_totales = {ind.id for ind in self.poblacion.values() if ind.estado == self.I}
+        self.numero_infectados_totales = [len(self.historia_infectados_totales)]
+
+    def crear_poblacion(self):
+        poblacion = dict()
+        for ind in range(self.tamano_poblacion):
+            probs = [self.probabilidad[self.S],
+                     self.probabilidad[self.E],
+                     self.probabilidad[self.I],
+                     self.probabilidad[self.R]]
+            estado_init = np.random.choice([self.S, self.E, self.I, self.R], 1, p=probs)
+
+            inicio_sintomas = min(np.random.lognormal(np.log(4.1) - 8 / 9, 4 / 3), 20) + 1
+            final_sintomas = inicio_sintomas + np.random.randint(7, 10)
+            duracion_infeccion = final_sintomas + np.random.randint(5, 9)
+            dia_muerte = final_sintomas - 1
+            dias_sintomas = [int(inicio_sintomas), int(final_sintomas)]
+
+            dia_aparicion_ac = 0
+            sintomatico = False
+            muere = False
+
+            if np.random.rand() < self.probabilidad['sintomatico']:
+                sintomatico = True
+                if np.random.rand() < self.probabilidad['muerte']:
+                    muere = True
+                
+            poblacion[ind] = Individuo(estado_init[0], ind, duracion_infeccion, dias_sintomas, dia_muerte, dia_aparicion_ac, sintomatico, muere)
+
+        return poblacion

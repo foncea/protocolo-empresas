@@ -4,86 +4,59 @@ from .individuo import Individuo, IndividuoRol, IndividuoFamilia
 from collections import Counter, defaultdict
 
 class SimuladorBase:
-    def __init__(self, tamano_poblacion, precision_tests, probabilidad, duracion_infeccion, R0):
+    def __init__(self, tamano_poblacion, precision_tests, probabilidad, duracion_infeccion, R0_poblacion):
         self.tamano_poblacion = tamano_poblacion
         self.precision_tests = precision_tests
         self.probabilidad = probabilidad
         self.S = 'susceptible'
-        self.E = 'expuesto'
         self.I = 'infeccioso'
         self.R = 'recuperado'
         self.duracion_infeccion = duracion_infeccion
-        self.R0_empresa = R0['empresa']
-        self.R0_poblacion = R0['poblacion']
-
-        self.alpha = 1 / 3  #periodo de incubacion
-        self.gamma = 1 / 17.5 #periodo medio de infeccion
-        self.beta_poblacion = self.gamma * self.R0_poblacion
-        self.beta_empresa = self.gamma * self.R0_empresa
-        self.p_contagio_diaria = {'trabajo': 3 / 700 * self.beta_empresa,
-                                  'cuarentena': 3 / 700 * self.beta_poblacion / 2}
+        self.R0_poblacion = R0_poblacion
         
         self.tiempo = 0
-
+        
+        self.p_contagio_diaria = {'trabajo': self.probabilidad['contagio_diaria'], 'cuarentena': self.probabilidad['contagio_diaria']}
+        
         self.poblacion = self.crear_poblacion()
-
+        
+        self.estados = dict((ind.id, ind.estado) for ind in self.poblacion.values())
+        self.estados_observados = dict((ind.id, ind.estado_observado) for ind in self.poblacion.values())
+        self.actividades = dict((ind.id, ind.actividad) for ind in self.poblacion.values())
+        self.estados_actividades = dict((ind.id, (ind.estado, ind.actividad)) for ind in self.poblacion.values())
+        
+        self.historia_estados = [self.estados]
+        self.historia_estados_observados = [self.estados_observados]
+        self.historia_actividades = [self.actividades]
+        self.historia_estados_actividades = [self.estados_actividades]
+        
         self.historia_numero_tests = [0]
-        self.historia_infectados_totales = {ind.id for ind in self.poblacion.values() if ind.estado == self.I}
-        self.numero_infectados_totales = [len(self.historia_infectados_totales)]
 
     def crear_poblacion(self):
         poblacion = dict()
         for ind in range(self.tamano_poblacion):
             probs = [self.probabilidad[self.S],
-                     self.probabilidad[self.E],
                      self.probabilidad[self.I],
                      self.probabilidad[self.R]]
-            estado_init = np.random.choice([self.S, self.E, self.I, self.R], 1, p=probs)
+            estado_init = np.random.choice([self.S, self.I, self.R], 1, p=probs)
 
-            inicio_sintomas = min(np.random.lognormal(np.log(4.1) - 8 / 9, 4 / 3), 20) + 1
-            final_sintomas = inicio_sintomas + np.random.randint(7, 10)
-            duracion_infeccion = final_sintomas + np.random.randint(0, 1)
-            dia_muerte = final_sintomas - 1
-            dias_sintomas = [int(inicio_sintomas), int(final_sintomas)]
+            duracion_infeccion = np.random.randint(self.duracion_infeccion[0], self.duracion_infeccion[1] + 1)
 
-            dia_aparicion_ac = 0
-            sintomatico = False
-            muere = False
+            dia_aparicion_ac = np.random.randint(self.precision_tests['dia_aparicion_ac'][0], self.precision_tests['dia_aparicion_ac'][1] + 1)
 
             if np.random.rand() < self.probabilidad['sintomatico']:
-                sintomatico = True
+                inicio = np.random.randint(2, 13)
+                final = inicio + np.random.randint(5, 10)
+                dias_sintomas = [inicio, final] 
                 if np.random.rand() < self.probabilidad['muerte']:
-                    muere = True
-                
-            poblacion[ind] = Individuo(estado_init[0], ind, duracion_infeccion, dias_sintomas, dia_muerte, dia_aparicion_ac, sintomatico, muere)
+                    dia_muerte = min(dias_sintomas[1] - 1, duracion_infeccion - 1)
+                else:
+                    dia_muerte = 0
+            else:
+                dias_sintomas = [0, 0]
+                dia_muerte = 0
 
-        return poblacion
-
-    def crear_poblacion2(self):
-        poblacion = dict()
-        for ind in range(self.tamano_poblacion):
-            probs = [self.probabilidad[self.S],
-                     self.probabilidad[self.E],
-                     self.probabilidad[self.I],
-                     self.probabilidad[self.R]]
-            estado_init = np.random.choice([self.S, self.E, self.I, self.R], 1, p=probs)
-
-            inicio_sintomas = min(np.random.lognormal(np.log(4) - 8 / 9, 4 / 3), 14) + 1
-            final_sintomas = inicio_sintomas + np.random.randint(7, 14)
-            duracion_infeccion = final_sintomas + np.random.randint(10, 14)
-            dia_muerte = final_sintomas - 1
-            dias_sintomas = [int(inicio_sintomas), int(final_sintomas)]
-
-            dia_aparicion_ac = 0
-            sintomatico = False
-            muere = False
-
-            if np.random.rand() < self.probabilidad['sintomatico']:
-                sintomatico = True
-                if np.random.rand() < self.probabilidad['muerte']:
-                    muere = True
-                
-            poblacion[ind] = Individuo(estado_init[0], ind, duracion_infeccion, dias_sintomas, dia_muerte, dia_aparicion_ac, sintomatico, muere)
+            poblacion[ind] = Individuo(estado_init[0], ind, duracion_infeccion, dias_sintomas, dia_muerte, dia_aparicion_ac)
 
         return poblacion
 
@@ -113,26 +86,30 @@ class SimuladorBase:
             
     def actualizar_probabilidad(self):
         infecciosos = [ind.id for ind in self.poblacion.values() if ind.estado == self.I]
-        susceptibles = [ind.id for ind in self.poblacion.values() if ind.estado == self.S]
         trabajando = [ind.id for ind in self.poblacion.values() if ind.actividad == 'trabajo']
-        trabajando_enfermos = len(set(infecciosos) & set(trabajando))
-        trabajando_susceptibles = max(len(set(susceptibles) & set(trabajando)), 1)
+        trabajando_enfermos = len(list(set(infecciosos) & set(trabajando)))
         
-        self.p_contagio_diaria['trabajo'] = self.beta_empresa * trabajando_enfermos / max(1, len(trabajando)) / 2 + 3 / 700 * self.beta_poblacion / 2
-        #self.p_contagio_diaria['trabajo'] = self.p_contagio_diaria['trabajo'] if self.p_contagio_diaria['trabajo'] < 1/2 else 1/2 
-
+        self.p_contagio_diaria['trabajo'] = self.probabilidad['contagio_diaria'] / 2 + self.R0_poblacion / 26 / 2 * trabajando_enfermos / (self.tamano_poblacion - trabajando_enfermos)
         
     def tick(self):
         for ind in self.poblacion.values():
             ind.tick(self.p_contagio_diaria)
             
         self.poblacion = dict((ind.id, ind) for ind in self.poblacion.values() if ind.vive)
-     
+                
+        #self.actualizar_estados()
+        #self.actualizar_estados_observados()
+        #self.actualizar_actividades()
+        #self.actualizar_estados_actividades()
+        
         self.actualizar_probabilidad()
+            
+        #self.historia_estados.append(self.estados)
+        #self.historia_estados_observados.append(self.estados_observados)
+        #self.historia_actividades.append(self.actividades)
+        #self.historia_estados_actividades.append(self.estados_actividades)
         
         self.historia_numero_tests.append(self.numero_tests)
-        self.historia_infectados_totales.update({ind.id for ind in self.poblacion.values() if ind.estado == 'infeccioso'})
-        self.numero_infectados_totales.append(len(self.historia_infectados_totales))
             
         self.tiempo += 1
         
@@ -152,7 +129,7 @@ class SimuladorEficiente(SimuladorBase):
     def __init__(self, tamano_poblacion, precision_tests, probabilidad, duracion_infeccion, R0_poblacion):
         super().__init__(tamano_poblacion, precision_tests, probabilidad, duracion_infeccion, R0_poblacion)
 
-        self.estados_actividades_obs = dict((ind.id, (ind.estado, ind.estado_observado, ind.actividad, ind.sintomatico)) for ind in self.poblacion.values())
+        self.estados_actividades_obs = dict((ind.id, (ind.estado, ind.estado_observado, ind.actividad)) for ind in self.poblacion.values())
         self.df_estados_actividades_obs = pd.DataFrame.from_dict(Counter(self.estados_actividades_obs.values()), orient='index')
         self.df_estados_actividades_obs['tiempo'] = self.tiempo
         
@@ -162,7 +139,7 @@ class SimuladorEficiente(SimuladorBase):
         self.df_estados_actividades_obs = pd.concat([self.df_estados_actividades_obs, estado_actividad_actual], axis=0)
 
     def actualizar_estados_actividades_obs(self):
-        self.estados_actividades_obs =  dict((ind.id, (ind.estado, ind.estado_observado, ind.actividad, ind.sintomatico)) for ind in self.poblacion.values())
+        self.estados_actividades_obs =  dict((ind.id, (ind.estado, ind.estado_observado, ind.actividad)) for ind in self.poblacion.values())
         
     def tick(self):
         super().tick()

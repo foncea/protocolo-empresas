@@ -1,6 +1,7 @@
-from base.simulador_sp import SimuladorAdhiere
-from base.algoritmos import AlgoritmoBios, AlgoritmoHacerNada, AlgoritmoHacerNadaCerrar, AlgoritmoBiosTurnos, AlgoritmoHacerNadaTurnos, AlgoritmoLiteralmenteHacerNada
-from base.individuo_sp import IndividuoAdhiere
+from base.seir.simulador import SimuladorBase, SimuladorEficiente, SimuladorRoles, SimuladorFamilias
+# from base.seir.simulador_ex import SimuladorBase, SimuladorEficiente, SimuladorRoles, SimuladorFamilias, Simulador2
+from base.seir.algoritmos import AlgoritmoBios, AlgoritmoHacerNada, AlgoritmoHacerNadaCerrar, AlgoritmoBiosTurnos, AlgoritmoHacerNadaTurnos, AlgoritmoLiteralmenteHacerNada, AlgoritmoBiosPrevencion
+from base.seir.individuo import Individuo
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -12,7 +13,7 @@ from tqdm import trange
 # + Cambiar duracion de infeccioso (dejarlo como parametro)
 # + Cambiar p_m para que de 2% (edad laboral)
 # + Prob contagio: peso = numero de horas laborales/16
-# + Agregar R_0, es lineal?xk
+# + Agregar R_0, es lineal?
 # + Agregar tiempo ciego test
 # + Agregar dias de infeccion inicial en indiviuos
 # + Escenario no hacer nada
@@ -62,8 +63,8 @@ def dict_prob(ps, pe, pi, pr, psinto, pm, p_cont):
     return {'susceptible': ps, 'expuesto': pe, 'infeccioso': pi, 'recuperado': pr, 'sintomatico': psinto, 'muerte': pm, 'contagio_diaria': p_cont}
 
 # Parametros y precision maxima del test
-esp = [1]#[0.97]
-sen = [0.93]
+esp = [0.95]#[0.97]
+sen = [0.8]
 dia_aparicion_ac = [[7, 12]]
 def dict_prec_test(eg, sg, em, sm, dias_ac):
     def precision_test(tiempo_infeccion, dia_ac):
@@ -83,10 +84,10 @@ def dict_prec_test(e, s, dias_ac):
 # Parametros poblacion
 tamano_poblacion = [int(sys.argv[5])]
 R0 = [{'empresa': float(sys.argv[6]), 'poblacion': 1.6}]   #R0_empresa
-adherencia = float(sys.argv[11])
 
 # Parametros algoritmo
 lista_algoritmos = {'Bios': lambda x: AlgoritmoBios(x[0], x[1]),
+                    'BiosPrevencion': lambda x: AlgoritmoBiosPrevencion(x[0], x[1]),
                     'BiosCerrar': lambda x: AlgoritmoBiosCerrar(x[0], x[1]),
                     'HacerNada': lambda x: AlgoritmoHacerNada(x[0], x[1]),
                     'HacerNadaCerrar': lambda x: AlgoritmoHacerNadaCerrar(x[0]),
@@ -149,7 +150,7 @@ def umbral_cv(n, df, u):
 for p in parametros:
     alg = lista_algoritmos[usar_algoritmo]([p['cuarentena'], p['frecuencia_test']])
     for n in trange(numero_iteraciones):
-        sim = SimuladorAdhiere(p['tamano'], p['precision_test'], p['probabilidades'], p['duracion_infeccion'], p['R0'], adherencia)
+        sim = SimuladorEficiente(p['tamano'], p['precision_test'], p['probabilidades'], p['duracion_infeccion'], p['R0'])
         sim.simular(alg, tiempo_simulacion)
 
         sim.df_estados_actividades_obs['it'] = n
@@ -174,14 +175,12 @@ r0 = sys.argv[6]
 iteraciones = sys.argv[8]
 fecha = sys.argv[9]
 p_i = sys.argv[10]
-adherencia = sys.argv[11]
-
-sufijo = '_' + alg + '_frec=' + frec + '_pob=' + pob + '_cinic=' + cinic + '_r0=' + r0 + '_pi=' + p_i + '_iter=' + iteraciones + '_' + adherencia + '_' + fecha 
+sufijo = '_' + alg + '_frec=' + frec + '_pob=' + pob + '_cinic=' + cinic + '_r0=' + r0 + '_pi=' + p_i + '_iter=' + iteraciones + '_' + fecha 
 
 resultados_df[['estado', 'estado_observado', 'actividad', 'sintomas']] = pd.DataFrame(resultados_df.index.tolist(), index=resultados_df.index)  
-resultados_df.rename(columns={0: 'cantidad'}).to_csv('../../datos_simulaciones/resultados_sanpedro' + sufijo + '.csv', index=False)
+resultados_df.rename(columns={0: 'cantidad'}).to_csv('../../datos_simulaciones/resultados' + sufijo + '.csv', index=False)
 
-pd.DataFrame.from_dict(numero_tests).T.reset_index().to_csv('../../datos_simulaciones/numero_tests_sanpedro' + sufijo + '.csv')
-pd.DataFrame.from_dict(numero_infecciosos).T.reset_index().to_csv('../../datos_simulaciones/numero_infecciosos_sanpedro' + sufijo + '.csv')
+pd.DataFrame.from_dict(numero_tests).T.reset_index().to_csv('../../datos_simulaciones/numero_tests' + sufijo + '.csv')
+pd.DataFrame.from_dict(numero_infecciosos).T.reset_index().to_csv('../../datos_simulaciones/numero_infecciosos' + sufijo + '.csv')
 
 #print('Resultados guardados en disco')

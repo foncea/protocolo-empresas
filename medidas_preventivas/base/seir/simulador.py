@@ -19,7 +19,9 @@ class SimuladorBase:
         self.alpha = 1 / 3  #periodo de incubacion
         self.gamma = 1 / 17.5 #periodo medio de infeccion
         self.beta_poblacion = self.gamma * self.R0_poblacion
-        self.beta_empresa = self.gamma * self.R0_empresa
+        self.beta_empresa_noprev = self.gamma * self.R0_empresa
+        self.beta_empresa_prev = self.gamma * self.R0_empresa / 2
+        self.beta_empresa = self.beta_empresa_noprev
         self.p_contagio_diaria = {'trabajo': 3 / 700 * self.beta_empresa,
                                   'cuarentena': 3 / 700 * self.beta_poblacion / 2}
         
@@ -42,7 +44,7 @@ class SimuladorBase:
 
             inicio_sintomas = min(np.random.lognormal(np.log(4.1) - 8 / 9, 4 / 3), 20) + 1
             final_sintomas = inicio_sintomas + np.random.randint(7, 10)
-            duracion_infeccion = final_sintomas + np.random.randint(0, 1)
+            duracion_infeccion = final_sintomas + np.random.randint(5, 10)
             dia_muerte = final_sintomas - 1
             dias_sintomas = [int(inicio_sintomas), int(final_sintomas)]
 
@@ -142,6 +144,11 @@ class SimuladorBase:
     def simular(self, algoritmo, tiempo_simulacion):
         while self.tiempo < tiempo_simulacion:
             self.poblacion = algoritmo.decidir(self.poblacion, self.tiempo, self.precision_tests)
+            if algoritmo.prevencion:
+                 self.beta_empresa = self.beta_empresa_prev
+            else:
+                self.beta_empresa = self.beta_empresa_noprev
+
             self.numero_tests = algoritmo.numero_tests
             self.tick()
             algoritmo.tick()

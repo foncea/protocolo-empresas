@@ -5,15 +5,13 @@ class Individuo:
     '''
     Clase de individuo
     '''
-    def __init__(self, estado_inicial, idx, duracion_infeccion, dias_sintomas, dia_muerte, dia_aparicion_ac, sintomatico, muere):
+    def __init__(self, estado_inicial, idx, duracion_infeccion, dias_sintomas, dia_muerte, dia_aparicion_ac):
         self.id = idx
         self.estado_inicial = estado_inicial
         self.duracion_infeccion = duracion_infeccion
         self.dias_sintomas = dias_sintomas
         self.dia_muerte = dia_muerte
         self.dia_aparicion_ac = dia_aparicion_ac
-        self.sera_sintomatico = sintomatico
-        self.muere = muere
         
         self.estado = estado_inicial
         self.estado_observado = 'susceptible'
@@ -69,13 +67,7 @@ class Individuo:
         return self.ultimo_IgG
 
     def testear_ac(self, s, e):
-        if self.tiempo < self.tiempo_inicio_infeccion + self.dias_sintomas[0] + 8:
-            s = 0.11
-        elif self.tiempo < self.tiempo_inicio_infeccion + self.dias_sintomas[0] + 15:
-            s = 0.8#0.93
-        else:
-            s = 0.8#0.97
-        if (self.estado in ['infeccioso', 'expuesto']) and (self.tiempo_infeccioso >= self.dia_aparicion_ac):
+        if (self.estado == 'infeccioso') and (self.tiempo_infeccioso >= self.dia_aparicion_ac):
             self.ultimo_test = (s > random.rand())
         else:
             self.ultimo_test = (e < random.rand())
@@ -104,7 +96,7 @@ class Individuo:
         
     def enfermar(self):
         self.tiempo_inicio_infeccion = self.tiempo
-        self.estado = 'expuesto'
+        self.estado = 'infeccioso'
     
     def recuperarse(self):
         self.estado = 'recuperado'
@@ -113,6 +105,10 @@ class Individuo:
         self.vive = False
         
     def tick(self, prob_infeccion, ):
+        #self.historia_actividad.append(self.actividad)
+        #self.historia_estado.append(self.estado)
+        #self.historia_estado_observado.append(self.estado_observado)
+
         prob_inf = prob_infeccion[self.actividad]
         if self.cuarentena_nacional:
             prob_inf = 0
@@ -128,19 +124,16 @@ class Individuo:
             if self.tiempo_infeccioso > self.duracion_infeccion:
                 self.estado = 'recuperado'
 
-            if self.tiempo_infeccioso == self.dias_sintomas[0] and self.sera_sintomatico:
+            if self.tiempo_infeccioso == self.dias_sintomas[0]:
                 self.sintomatico = True
             elif self.tiempo_infeccioso == self.dias_sintomas[1]:
                 self.sintomatico = False
 
-            if self.tiempo_infeccioso == self.dia_muerte and self.muere:
+            if self.tiempo_infeccioso == self.dia_muerte:
                 self.morir()
             
         if (self.estado == 'susceptible') and (random.rand() < prob_inf):
             self.enfermar()
-
-        if (self.estado == 'expuesto') and (self.tiempo - self.tiempo_inicio_infeccion >= self.dias_sintomas[0] - 2):
-            self.estado = 'infeccioso'
 
         self.cuarentena_nacional = False
             
@@ -180,9 +173,6 @@ class IndividuoRol(Individuo):
             
         if (self.estado == 'susceptible') and (random.rand() < prob_inf):
             self.enfermar()
-
-        if (self.estado == 'expuesto') and (self.tiempo - self.tiempo_inicio_infeccion >= self.dias_sintomas[0] - 2):
-                self.estado == 'infeccioso'
             
         self.tiempo += 1
 

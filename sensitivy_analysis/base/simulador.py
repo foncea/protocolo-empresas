@@ -42,7 +42,7 @@ class SimuladorBase:
 
             inicio_sintomas = min(np.random.lognormal(np.log(4.1) - 8 / 9, 4 / 3), 20) + 1
             final_sintomas = inicio_sintomas + np.random.randint(7, 10)
-            duracion_infeccion = final_sintomas + np.random.randint(0, 1)
+            duracion_infeccion = final_sintomas + np.random.randint(5, 10)
             dia_muerte = final_sintomas - 1
             dias_sintomas = [int(inicio_sintomas), int(final_sintomas)]
 

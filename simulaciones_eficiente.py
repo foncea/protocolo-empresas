@@ -1,5 +1,4 @@
 from base.seir.simulador import SimuladorBase, SimuladorEficiente, SimuladorRoles, SimuladorFamilias
-# from base.seir.simulador_ex import SimuladorBase, SimuladorEficiente, SimuladorRoles, SimuladorFamilias, Simulador2
 from base.seir.algoritmos import AlgoritmoBios, AlgoritmoHacerNada, AlgoritmoHacerNadaCerrar, AlgoritmoBiosTurnos, AlgoritmoHacerNadaTurnos, AlgoritmoLiteralmenteHacerNada
 from base.seir.individuo import Individuo
 import numpy as np

@@ -1,11 +1,11 @@
 import numpy as np
+import datetime as dt
 
 class AlgoritmoBios:
     def __init__(self, cuarentena, frecuencia_test):
         self.algoritmo_id = 'anticuerpos'
         self.frecuencia_test = frecuencia_test
         self.duracion_cuarentena = cuarentena['duracion']
-        print(self.duracion_cuarentena)
         self.cuarentena_inicial = cuarentena['inicial']
 
         self.individuo = None
@@ -14,7 +14,7 @@ class AlgoritmoBios:
         
         self.numero_tests = 0
         
-        self.tiempo_pcr = 24  #agregar como precision test
+        self.tiempo_pcr = 4  #agregar como precision test
     
     def reset(self):
         self.numero_tests = 0
@@ -48,17 +48,24 @@ class AlgoritmoBios:
         else:
             self.individuo.aplicar_trabajo()
             
-    def decidir(self, poblacion, tiempo, dia_hora, precision_tests):
+    def decidir(self, poblacion, tiempo, dia, precision_tests):
         self.poblacion = poblacion
-        # if tiempo < self.cuarentena_inicial:
-        #     for ind in poblacion.values():
-        #         self.individuo = ind
-        #         self.individuo.cuarentena_nacional = True
-        #         self.individuo.aplicar_cuarentena()
-        #         if self.individuo.sintomatico:
-        #             self.individuo.cambiar_estado_observado('infeccioso')
-        #         self.poblacion[self.individuo.id] = self.individuo
-        #     return self.poblacion 
+        if tiempo < self.cuarentena_inicial:
+            for ind in poblacion.values():
+                self.individuo = ind
+                self.individuo.cuarentena_nacional = True
+                self.individuo.aplicar_cuarentena()
+                if self.individuo.sintomatico:
+                    self.individuo.cambiar_estado_observado('infeccioso')
+                self.poblacion[self.individuo.id] = self.individuo
+            return self.poblacion 
+
+        if self.frecuencia_test == 1:
+            testear = dia.isoweekday() in [1, 4]
+        elif self.frecuencia_test == 0:
+            testear = False
+        else:
+            testear = tiempo % self.frecuencia_test == 0
 
         for ind in poblacion.values():
             precision_actual_tests = precision_tests['precision']
@@ -67,7 +74,7 @@ class AlgoritmoBios:
             if self.individuo.en_trabajo():
                 if self.individuo.sintomatico:
                     self.individuo.cambiar_estado_observado('infeccioso')
-                elif (dia_hora.isoweekday() in [2, 5]) and (self.individuo.estado_observado == 'susceptible') and (self.frecuencia_test != 0):
+                elif testear and (self.individuo.estado_observado == 'susceptible'):
                     self.aplicar_test(precision_actual_tests)
                     self.asignar_estado_segun_test()
             elif (self.individuo.tiempo_cuarentena > self.tiempo_pcr) and (self.individuo.estado == 'susceptible'):
@@ -77,10 +84,67 @@ class AlgoritmoBios:
                     self.individuo.cambiar_estado_observado('recuperado')
                     
             self.asignar_actividad()
-              
-        return self.poblacion        
+            
+        return self.poblacion    
 
 class AlgoritmoBiosTurnos(AlgoritmoBios):
+    def __init__(self, duracion_cuarentena, frecuencia_test):
+        super().__init__(duracion_cuarentena, frecuencia_test)
+
+        self.turno = 0
+        self.algoritmo_id = 'anticuerpos + turnos'
+
+    def reset(self):
+        super().reset()
+        self.turnos = 0
+
+    def decidir(self, poblacion, tiempo, dia, precision_tests):
+        self.poblacion = poblacion
+        tamano_turno = int(len(self.poblacion) / 2)
+        self.particion_poblacion = [[i for i in self.poblacion if i < tamano_turno], 
+                                    [i for i in self.poblacion if i >= tamano_turno]]
+        if tiempo % 14 == 0:
+            self.turno = 1 - self.turno
+            self.poblacion_activa = dict((i, poblacion[i]) for i in self.particion_poblacion[self.turno])
+            self.poblacion_espera = dict((i, poblacion[i]) for i in self.particion_poblacion[1 - self.turno])
+
+        if self.frecuencia_test == 1:
+            testear = dia.isoweekday() in [1, 4]
+        elif self.frecuencia_test == 0:
+            testear = False
+        else:
+            testear = tiempo % self.frecuencia_test == 0
+
+        for ind in self.poblacion_activa.values():
+            precision_actual_tests = precision_tests['precision']
+            self.individuo = ind
+            
+            if self.individuo.en_trabajo():
+                if self.individuo.sintomatico:
+                    self.individuo.cambiar_estado_observado('infeccioso')
+                elif testear and (self.individuo.estado_observado == 'susceptible'):
+                    self.aplicar_test(precision_actual_tests)
+                    self.asignar_estado_segun_test()
+            elif (self.individuo.tiempo_cuarentena > self.tiempo_pcr) and (self.individuo.estado == 'susceptible'):
+                self.individuo.cambiar_estado_observado('susceptible')
+            elif self.individuo.tiempo_cuarentena > self.duracion_cuarentena:
+                if tiempo >= self.individuo.tiempo_inicio_infeccion + self.individuo.dias_sintomas[1] + self.duracion_cuarentena:
+                    self.individuo.cambiar_estado_observado('recuperado')
+
+            self.asignar_actividad()
+            self.poblacion[self.individuo.id] = self.individuo
+
+        for ind in self.poblacion_espera.values():
+            self.individuo = ind
+            if self.individuo.sintomatico:
+                self.individuo.cambiar_estado_observado('infeccioso')
+            self.individuo.aplicar_cuarentena()
+            self.poblacion[self.individuo.id] = self.individuo
+
+        return self.poblacion        
+
+
+class AlgoritmoBiosTurnos2(AlgoritmoBios):
     def __init__(self, duracion_cuarentena, frecuencia_test):
         super().__init__(duracion_cuarentena, frecuencia_test)
 
@@ -146,7 +210,7 @@ class AlgoritmoBiosTurnos(AlgoritmoBios):
 class AlgoritmoHacerNada(AlgoritmoBios):
     def __init__(self, cuarentena, frecuencia_test):
         super().__init__(cuarentena, frecuencia_test)
-        self.frecuencia_test = 0
+        self.frecuencia_test = float('nan')
         self.algoritmo_id = 'hacer nada'
 
 class AlgoritmoHacerNadaTurnos(AlgoritmoBiosTurnos):

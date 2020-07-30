@@ -1,11 +1,13 @@
-from base.seir.simulador import SimuladorBase, SimuladorEficiente, SimuladorRoles, SimuladorFamilias
-from base.seir.algoritmos import AlgoritmoBios, AlgoritmoHacerNada, AlgoritmoHacerNadaCerrar, AlgoritmoBiosTurnos, AlgoritmoHacerNadaTurnos, AlgoritmoLiteralmenteHacerNada
-from base.seir.individuo import Individuo
+from base.simulador import SimuladorBase, SimuladorEficiente
+# from base.seir.simulador_ex import SimuladorBase, SimuladorEficiente, SimuladorRoles, SimuladorFamilias, Simulador2
+from base.algoritmos import AlgoritmoBios, AlgoritmoHacerNada
+from base.individuo import Individuo
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
 from tqdm import trange
+import datetime as dt
 
 '''
 # TODO:
@@ -56,42 +58,36 @@ p_e = [0.00]
 p_r = [0.00]
 p_sinto = [0.5]
 p_m = [0.02]
-duracion_infeccion = [[24, 28]]
 p_contagio_diaria = [0.00032]       #basal
+inf_post_sint = [[5, 10]]
 def dict_prob(ps, pe, pi, pr, psinto, pm, p_cont):
     return {'susceptible': ps, 'expuesto': pe, 'infeccioso': pi, 'recuperado': pr, 'sintomatico': psinto, 'muerte': pm, 'contagio_diaria': p_cont}
 
 # Parametros y precision maxima del test
-esp = [1]#[0.97]
-sen = [0.8]
-dia_aparicion_ac = [[7, 12]]
-def dict_prec_test(eg, sg, em, sm, dias_ac):
-    def precision_test(tiempo_infeccion, dia_ac):
-        if tiempo_infeccion < dia_ac:
-            return {'E_G': eg, 'S_G': 0, 'E_M': em, 'S_M': 0}
+esp = [0.99]
+sen = [0.88]
+def dict_prec_test(e, s_max):
+    def precision_test(tiempo, tiempo_inicio_infeccion, dias_sintomas):        
+        if tiempo < tiempo_inicio_infeccion + dias_sintomas[0] + 7:
+            s = 0.2
         else:
-            return {'E_G': eg, 'S_G': sg, 'E_M': em, 'S_M': sm}
-    return {'precision': precision_test, 'dia_aparicion_ac': dias_ac}
-def dict_prec_test(e, s, dias_ac):
-    def precision_test(tiempo_infeccion, dia_ac):
-        if tiempo_infeccion < dia_ac:
-            return {'E': e, 'S': 0}
-        else:
-            return {'E': e, 'S': s}
-    return {'precision': precision_test, 'dia_aparicion_ac': dias_ac}
+            s = s_max
+        return e, s
+    return {'precision': precision_test, 'dia_aparicion_ac': 0}
 
 # Parametros poblacion
 tamano_poblacion = [int(sys.argv[5])]
-R0 = [{'empresa': float(sys.argv[6]), 'poblacion': 1.6}]   #R0_empresa
+input_data = pd.read_csv(sys.argv[12])
+input_data = input_data.loc[lambda x: x['tipo_turno'] != 'Fuera de planta'].copy()
+print(input_data['tipo_turno'].value_counts())
+info_poblacion = [input_data.reset_index()]
+R0 = [{'empresa': float(sys.argv[6]), 'poblacion': 2.5}]   #R0_empresa
+
 
 # Parametros algoritmo
 lista_algoritmos = {'Bios': lambda x: AlgoritmoBios(x[0], x[1]),
-                    'BiosCerrar': lambda x: AlgoritmoBiosCerrar(x[0], x[1]),
                     'HacerNada': lambda x: AlgoritmoHacerNada(x[0], x[1]),
-                    'HacerNadaCerrar': lambda x: AlgoritmoHacerNadaCerrar(x[0]),
-                    'BiosTurnos': lambda x: AlgoritmoBiosTurnos(x[0], x[1]),
-                    'HacerNadaTurnos': lambda x: AlgoritmoHacerNadaTurnos (x[0], x[1]),
-                    'LiteralmenteHacerNada': lambda x: AlgoritmoLiteralmenteHacerNada(x[0], x[1])}
+                    }
 usar_algoritmo = str(sys.argv[1]) #'HacerNadaCerrar'
 frecuencia_test = [int(sys.argv[2])] #[0]
 cuarentena = [{'duracion': int(sys.argv[3]), 
@@ -101,16 +97,16 @@ cuarentena = [{'duracion': int(sys.argv[3]),
 tiempo_simulacion = int(sys.argv[7])
 numero_iteraciones = int(sys.argv[8]) #100
 
-parametros = [{'duracion_infeccion': df, 
-               'tamano': tamano, 
+dia_inicial = dt.datetime.strptime(sys.argv[11], '%Y-%m-%d')
+
+parametros = [{'info_poblacion': tamano, 
                'probabilidades': dict_prob(ps, pe, pi, pr, psinto, pm, p_cont),
-               'precision_test': dict_prec_test(e, s, dac), 
+               'precision_test': dict_prec_test(e, s), 
                'frecuencia_test': frec_t, 
                'cuarentena': dc,
                'R0': r0}
-              for df in duracion_infeccion
               for p_cont in p_contagio_diaria
-              for tamano in tamano_poblacion
+              for tamano in info_poblacion
               for ps in p_s
               for pe in p_e
               for pi in p_i
@@ -119,7 +115,6 @@ parametros = [{'duracion_infeccion': df,
               for pm in p_m
               for e in esp
               for s in sen
-              for dac in dia_aparicion_ac
               for frec_t in frecuencia_test
               for dc in cuarentena
               for r0 in R0]
@@ -148,7 +143,7 @@ def umbral_cv(n, df, u):
 for p in parametros:
     alg = lista_algoritmos[usar_algoritmo]([p['cuarentena'], p['frecuencia_test']])
     for n in trange(numero_iteraciones):
-        sim = SimuladorEficiente(p['tamano'], p['precision_test'], p['probabilidades'], p['duracion_infeccion'], p['R0'])
+        sim = SimuladorEficiente(p['info_poblacion'], p['precision_test'], p['probabilidades'], 0, p['R0'], dia_inicial)
         sim.simular(alg, tiempo_simulacion)
 
         sim.df_estados_actividades_obs['it'] = n
@@ -158,11 +153,11 @@ for p in parametros:
 
         alg.reset()
 
-        if False:#(n>1000) and n % 500 == 0:
-            print('Iteración: ' + str(n))
-            if umbral_cv(n, resultados_df, u):
-                print('Cv = menor a ' + str(u) + '%')
-                break
+        # if False:#(n>1000) and n % 500 == 0:
+        #     print('Iteración: ' + str(n))
+        #     if umbral_cv(n, resultados_df, u):
+        #         print('Cv = menor a ' + str(u) + '%')
+        #         break
 
 # Guardar resultados en disco
 alg = sys.argv[1]
@@ -176,9 +171,9 @@ p_i = sys.argv[10]
 sufijo = '_' + alg + '_frec=' + frec + '_pob=' + pob + '_cinic=' + cinic + '_r0=' + r0 + '_pi=' + p_i + '_iter=' + iteraciones + '_' + fecha 
 
 resultados_df[['estado', 'estado_observado', 'actividad', 'sintomas']] = pd.DataFrame(resultados_df.index.tolist(), index=resultados_df.index)  
-resultados_df.rename(columns={0: 'cantidad'}).to_csv('../datos_simulaciones/resultados' + sufijo + '.csv', index=False)
+resultados_df.rename(columns={0: 'cantidad'}).to_csv('../../datos_simulaciones/resultados' + sufijo + '.csv', index=False)
 
-pd.DataFrame.from_dict(numero_tests).T.reset_index().to_csv('../datos_simulaciones/numero_tests' + sufijo + '.csv')
-pd.DataFrame.from_dict(numero_infecciosos).T.reset_index().to_csv('../datos_simulaciones/numero_infecciosos' + sufijo + '.csv')
+pd.DataFrame.from_dict(numero_tests).T.reset_index().to_csv('../../datos_simulaciones/numero_tests' + sufijo + '.csv')
+pd.DataFrame.from_dict(numero_infecciosos).T.reset_index().to_csv('../../datos_simulaciones/numero_infecciosos' + sufijo + '.csv')
 
 #print('Resultados guardados en disco')

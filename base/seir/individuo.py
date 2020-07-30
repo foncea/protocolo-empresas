@@ -68,13 +68,9 @@ class Individuo:
         self.historia_IgG.append(self.ultimo_IgM)
         return self.ultimo_IgG
 
-    def testear_ac(self, s, e):
-        if self.tiempo < self.tiempo_inicio_infeccion + self.dias_sintomas[0] + 8:
-            s = 0.11
-        elif self.tiempo < self.tiempo_inicio_infeccion + self.dias_sintomas[0] + 15:
-            s = 0.93
-        else:
-            s = 0.97
+     def testear_ac(self, prec_test):
+        e, s = prec_test(self.tiempo, self.tiempo_inicio_infeccion, self.dias_sintomas)
+        
         if (self.estado in ['infeccioso', 'expuesto']) and (self.tiempo_infeccioso >= self.dia_aparicion_ac):
             self.ultimo_test = (s > random.rand())
         else:

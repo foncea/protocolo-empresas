@@ -1,0 +1,382 @@
+codigo,area_trabajo,tipo_turno,estado_inicial
+AA140695,isla_maipo,Administrativo,random
+AA270684,isla_maipo,12 Horas - Dia,random
+AA70375,isla_maipo,Administrativo,random
+AC100795,isla_maipo,12 Horas - Noche,random
+AC131292,isla_maipo,12 Horas - Dia,random
+AC140358,isla_maipo,Fuera de planta,random
+AD120476,isla_maipo,Administrativo,random
+AD211177,isla_maipo,Administrativo,random
+AF10877,isla_maipo,12 Horas - Dia,random
+AF220593,isla_maipo,12 Horas - Noche,random
+AF301174,isla_maipo,Fuera de planta,random
+AG40796,isla_maipo,12 Horas - Dia,random
+AG60576,isla_maipo,12 Horas - Noche,random
+AG61265,isla_maipo,12 Horas - Noche,random
+AL240257,isla_maipo,Fuera de planta,random
+AL80758,isla_maipo,Fuera de planta,random
+AM121169,isla_maipo,Administrativo,random
+AM130886,isla_maipo,Administrativo,random
+AM180746,isla_maipo,Fuera de planta,random
+AM20362,isla_maipo,Administrativo,random
+AM260288,isla_maipo,Administrativo,random
+AM300784,isla_maipo,Administrativo,random
+AN250997,isla_maipo,12 Horas - Noche,random
+AP120485,isla_maipo,12 Horas - Noche,random
+AR100495,isla_maipo,Administrativo,random
+AR50373,isla_maipo,Administrativo,random
+AS50474,isla_maipo,Administrativo,random
+BB280883,isla_maipo,12 Horas - Backup,random
+BK10791,isla_maipo,Administrativo,random
+BM271283,isla_maipo,12 Horas - Noche,random
+BP160688,isla_maipo,12 Horas - Noche,random
+BS190966,isla_maipo,12 Horas - Dia,random
+BV140894,isla_maipo,Administrativo,random
+BV180694,isla_maipo,Administrativo,random
+CA210687,isla_maipo,12 Horas - Noche,random
+CB30975,isla_maipo,Fuera de planta,random
+CD160974,isla_maipo,Fuera de planta,random
+CD70885,isla_maipo,12 Horas - Noche,random
+CD81086,isla_maipo,12 Horas - Dia,random
+CE10877,isla_maipo,Administrativo,random
+CG250648,isla_maipo,Fuera de planta,random
+CG311087,isla_maipo,Administrativo,random
+CG40993,isla_maipo,Administrativo,random
+CH10772,isla_maipo,12 Horas - Noche,random
+CH190793,isla_maipo,Administrativo,random
+CH200791,isla_maipo,Administrativo,random
+CJ11088,isla_maipo,Administrativo,random
+CJ120480,isla_maipo,12 Horas - Backup,random
+CJ131166,isla_maipo,12 Horas - Noche,random
+CL280694,isla_maipo,Administrativo,random
+CM120494,isla_maipo,12 Horas - Dia,random
+CN260895,isla_maipo,Administrativo,random
+CP180995,isla_maipo,12 Horas - Backup,random
+CP30476,isla_maipo,Fuera de planta,random
+CQ310393,isla_maipo,12 Horas - Noche,random
+CR90189,isla_maipo,Administrativo,random
+CS10687,isla_maipo,Administrativo,infeccioso
+CS131068,isla_maipo,Administrativo,random
+CS141292,isla_maipo,12 Horas,random
+CS200788,isla_maipo,Fuera de planta,random
+CT201078,isla_maipo,Administrativo,random
+CV180696,isla_maipo,Administrativo,random
+CV280188,isla_maipo,12 Horas - Backup,random
+CV31181,isla_maipo,Administrativo,random
+DA110999,isla_maipo,12 Horas - Backup,random
+DA170591,isla_maipo,12 Horas - Dia,random
+DC220867,isla_maipo,Administrativo,random
+DC30577,isla_maipo,Administrativo,random
+DC310595,isla_maipo,12 Horas - Dia,random
+DC80888,isla_maipo,Fuera de planta,random
+DD250485,isla_maipo,12 Horas - Noche,random
+DF11193,isla_maipo,12 Horas - Dia,random
+DF130598,isla_maipo,12 Horas - Dia,random
+DG170289,isla_maipo,12 Horas - Dia,random
+DG260452,isla_maipo,Fuera de planta,random
+DG290797,isla_maipo,12 Horas,random
+DG31101,isla_maipo,Administrativo,random
+DM60991,isla_maipo,12 Horas - Dia,random
+DP160999,isla_maipo,12 Horas - Noche,random
+DP230268,isla_maipo,12 Horas - Backup,random
+DR240691,isla_maipo,Administrativo,random
+DS81200,isla_maipo,Administrativo,random
+DV190573,isla_maipo,Administrativo,random
+EB291286,isla_maipo,12 Horas - Backup,random
+EC10360,isla_maipo,Fuera de planta,random
+EC180364,isla_maipo,Administrativo,random
+EC20859,isla_maipo,Administrativo,random
+EC21093,isla_maipo,Administrativo,random
+EE70485,isla_maipo,12 Horas,random
+EG311095,isla_maipo,Administrativo,random
+EM220592,isla_maipo,12 Horas - Noche,random
+EM220888,isla_maipo,Administrativo,random
+EQ101279,isla_maipo,12 Horas - Noche,random
+ER130173,isla_maipo,12 Horas - Noche,random
+ER180658,isla_maipo,Administrativo,random
+ET40881,isla_maipo,12 Horas - Noche,random
+EV180753,isla_maipo,Fuera de planta,random
+EV291178,isla_maipo,Administrativo,random
+EV70660,isla_maipo,Administrativo,random
+FA190296,isla_maipo,Administrativo,random
+FA91296,isla_maipo,12 Horas - Noche,random
+FB30780,isla_maipo,Administrativo,random
+FC181279,isla_maipo,Administrativo,random
+FC181291,isla_maipo,12 Horas - Noche,random
+FD10383,isla_maipo,12 Horas - Dia,random
+FD180297,isla_maipo,Administrativo,random
+FD271095,isla_maipo,Administrativo,random
+FG10686,isla_maipo,12 Horas - Dia,random
+FG150288,isla_maipo,12 Horas - Noche,random
+FG230197,isla_maipo,12 Horas - Backup,random
+FJ260386,isla_maipo,12 Horas - Dia,random
+FL40787,isla_maipo,12 Horas - Noche,random
+FM161093,isla_maipo,12 Horas - Dia,random
+FM20192,isla_maipo,Administrativo,random
+FM260167,isla_maipo,12 Horas - Dia,random
+FM280165,isla_maipo,12 Horas,random
+FP10361,isla_maipo,Administrativo,random
+FP170964,isla_maipo,12 Horas - Dia,random
+FP20282,isla_maipo,Administrativo,random
+FP290382,isla_maipo,Administrativo,random
+FP291172,isla_maipo,12 Horas,random
+FV60561,isla_maipo,Administrativo,random
+GC100798,isla_maipo,Administrativo,random
+GC280157,isla_maipo,12 Horas,random
+GF60882,isla_maipo,Administrativo,random
+GL60462,isla_maipo,12 Horas,random
+GR280871,isla_maipo,12 Horas - Dia,random
+GV250996,isla_maipo,Administrativo,random
+HC100473,isla_maipo,Administrativo,random
+HC50878,isla_maipo,Administrativo,random
+HD40689,isla_maipo,12 Horas,random
+HE200458,isla_maipo,Administrativo,random
+HF211276,isla_maipo,Administrativo,random
+HO70296,isla_maipo,12 Horas - Noche,random
+HP50684,isla_maipo,12 Horas - Backup,random
+HR70378,isla_maipo,Administrativo,random
+HT151162,isla_maipo,Administrativo,random
+HT221046,isla_maipo,Fuera de planta,random
+HV170770,isla_maipo,12 Horas - Noche,random
+IH60188,isla_maipo,Administrativo,random
+IL40991,isla_maipo,Administrativo,random
+IR161192,isla_maipo,12 Horas - Noche,random
+JA200789,isla_maipo,Fuera de planta,random
+JA20958,isla_maipo,Administrativo,random
+JA211294,isla_maipo,Administrativo,random
+JA240487,isla_maipo,12 Horas - Noche,random
+JA271194,isla_maipo,12 Horas - Noche,random
+JA291162,isla_maipo,Administrativo,random
+JB181059,isla_maipo,Administrativo,random
+JB220488,isla_maipo,12 Horas - Backup,random
+JC141190,isla_maipo,12 Horas - Dia,random
+JC160875,isla_maipo,Administrativo,random
+JC190591,isla_maipo,Administrativo,random
+JC220678,isla_maipo,Administrativo,random
+JC290169,isla_maipo,Administrativo,random
+JC311287,isla_maipo,12 Horas - Backup,random
+JC80368,isla_maipo,12 Horas,random
+JC80594,isla_maipo,12 Horas - Noche,random
+JD190274,isla_maipo,12 Horas - Noche,random
+JD21090,isla_maipo,12 Horas - Noche,random
+JD270192,isla_maipo,Administrativo,random
+JD281068,isla_maipo,Administrativo,random
+JD80155,isla_maipo,Fuera de planta,random
+JE230274,isla_maipo,Administrativo,random
+JE241094,isla_maipo,12 Horas - Dia,random
+JG211074,isla_maipo,12 Horas - Dia,random
+JG280271,isla_maipo,Administrativo,random
+JH240674,isla_maipo,Administrativo,random
+JI120989,isla_maipo,12 Horas - Dia,random
+JJ290888,isla_maipo,Administrativo,random
+JL191066,isla_maipo,Administrativo,random
+JL261092,isla_maipo,Administrativo,random
+JL61279,isla_maipo,Administrativo,random
+JM130373,isla_maipo,12 Horas - Noche,random
+JM160792,isla_maipo,Administrativo,random
+JM240679,isla_maipo,Administrativo,random
+JM250990,isla_maipo,12 Horas - Noche,random
+JM260286,isla_maipo,12 Horas - Dia,random
+JM270762,isla_maipo,12 Horas,random
+JN130881,isla_maipo,12 Horas - Backup,random
+JO100692,isla_maipo,Fuera de planta,random
+JO230193,isla_maipo,12 Horas - Backup,random
+JP10992,isla_maipo,12 Horas - Noche,random
+JP110473,isla_maipo,12 Horas,random
+JP130289,isla_maipo,Administrativo,random
+JP240488,isla_maipo,Administrativo,random
+JP271180,isla_maipo,Administrativo,random
+JP280100,isla_maipo,12 Horas - Dia,random
+JP290463,isla_maipo,Administrativo,random
+JS111062,isla_maipo,12 Horas - Noche,random
+JS161088,isla_maipo,12 Horas - Dia,random
+JS50366,isla_maipo,Administrativo,random
+JS81250,isla_maipo,Administrativo,random
+JV150573,isla_maipo,12 Horas - Backup,random
+JV20167,isla_maipo,Administrativo,random
+JV211195,isla_maipo,12 Horas,random
+JV280681,isla_maipo,12 Horas - Noche,random
+JV50277,isla_maipo,Administrativo,random
+KA280801,isla_maipo,Administrativo,random
+KA81297,isla_maipo,12 Horas - Dia,random
+KB10587,isla_maipo,12 Horas - Noche,random
+KR120491,isla_maipo,12 Horas - Dia,random
+KR270786,isla_maipo,Administrativo,random
+KS21286,isla_maipo,Fuera de planta,random
+LA10466,isla_maipo,Administrativo,random
+LA10680,isla_maipo,Administrativo,random
+LA140748,isla_maipo,Administrativo,random
+LB110462,isla_maipo,Administrativo,random
+LB11165,isla_maipo,Administrativo,random
+LB130993,isla_maipo,12 Horas - Noche,random
+LC100590,isla_maipo,12 Horas,random
+LC210473,isla_maipo,Administrativo,random
+LC270376,isla_maipo,Administrativo,random
+LD250779,isla_maipo,Administrativo,random
+LE100858,isla_maipo,12 Horas - Backup,random
+LE200970,isla_maipo,Administrativo,random
+LE261152,isla_maipo,Administrativo,random
+LG200299,isla_maipo,Administrativo,random
+LH240561,isla_maipo,Administrativo,random
+LJ20741,isla_maipo,Administrativo,random
+LL150963,isla_maipo,Administrativo,random
+LL160891,isla_maipo,Administrativo,random
+LM300489,isla_maipo,Fuera de planta,random
+LN60857,isla_maipo,Fuera de planta,random
+LO240180,isla_maipo,Administrativo,random
+LP140589,isla_maipo,12 Horas,random
+LT280790,isla_maipo,Administrativo,random
+LV220271,isla_maipo,12 Horas - Dia,random
+MA110693,isla_maipo,Administrativo,random
+MA210699,isla_maipo,12 Horas - Dia,random
+MA50892,isla_maipo,Administrativo,random
+MB10887,isla_maipo,Administrativo,random
+MB170291,isla_maipo,Administrativo,random
+MC130169,isla_maipo,Administrativo,random
+MC200193,isla_maipo,12 Horas - Backup,random
+MC20557,isla_maipo,Administrativo,random
+MC40283,isla_maipo,Administrativo,random
+ME280565,isla_maipo,Administrativo,random
+MG10163,isla_maipo,Administrativo,random
+MG10663,isla_maipo,Administrativo,random
+MG130296,isla_maipo,Administrativo,random
+MG180693,isla_maipo,Fuera de planta,random
+MG20278,isla_maipo,Administrativo,random
+MG300663,isla_maipo,Administrativo,random
+MG61164,isla_maipo,Administrativo,random
+MH190364,isla_maipo,Administrativo,random
+ML11063,isla_maipo,Administrativo,random
+ML130262,isla_maipo,12 Horas - Dia,random
+ML131293,isla_maipo,Administrativo,random
+ML160187,isla_maipo,Administrativo,random
+ML241162,isla_maipo,Administrativo,random
+ML280893,isla_maipo,12 Horas - Backup,random
+MM120583,isla_maipo,Administrativo,random
+MM170284,isla_maipo,Administrativo,random
+MM20481,isla_maipo,Administrativo,random
+MM20564,isla_maipo,12 Horas - Backup,random
+MM271257,isla_maipo,12 Horas - Noche,random
+MN181061,isla_maipo,Administrativo,random
+MO50682,isla_maipo,Administrativo,random
+MP10286,isla_maipo,12 Horas - Dia,random
+MP41094,isla_maipo,Administrativo,random
+MR180668,isla_maipo,Administrativo,random
+MR40871,isla_maipo,12 Horas - Backup,random
+MR81196,isla_maipo,12 Horas - Dia,random
+MS180784,isla_maipo,Administrativo,random
+MS301080,isla_maipo,Administrativo,random
+MS80369,isla_maipo,Administrativo,random
+MS80978,isla_maipo,Administrativo,random
+MS90359,isla_maipo,Administrativo,random
+MU90574,isla_maipo,12 Horas,random
+MV100487,isla_maipo,Administrativo,random
+MV121189,isla_maipo,Administrativo,random
+MV170990,isla_maipo,Administrativo,random
+MV271069,isla_maipo,Administrativo,random
+NC230873,isla_maipo,Administrativo,random
+NC310359,isla_maipo,12 Horas - Noche,random
+ND290389,isla_maipo,Administrativo,random
+NG20789,isla_maipo,12 Horas - Backup,random
+NL200693,isla_maipo,Administrativo,random
+NP270982,isla_maipo,Fuera de planta,random
+NR191000,isla_maipo,12 Horas - Noche,random
+NR60578,isla_maipo,Administrativo,random
+NS171085,isla_maipo,Administrativo,random
+NV110292,isla_maipo,Administrativo,random
+NV130295,isla_maipo,Administrativo,random
+NV240495,isla_maipo,12 Horas - Dia,random
+NY70684,isla_maipo,Fuera de planta,random
+OD271089,isla_maipo,Administrativo,random
+OH10466,isla_maipo,Administrativo,random
+OJ50871,isla_maipo,Administrativo,random
+PA111092,isla_maipo,12 Horas - Backup,random
+PA280665,isla_maipo,Fuera de planta,random
+PA300895,isla_maipo,12 Horas - Dia,random
+PB170381,isla_maipo,Administrativo,random
+PB190383,isla_maipo,Administrativo,random
+PC230487,isla_maipo,12 Horas - Noche,random
+PD160195,isla_maipo,12 Horas - Noche,random
+PD261149,isla_maipo,Fuera de planta,random
+PE130577,isla_maipo,Administrativo,random
+PE50196,isla_maipo,12 Horas - Backup,random
+PF30989,isla_maipo,Administrativo,random
+PG260186,isla_maipo,12 Horas - Noche,random
+PH270960,isla_maipo,Administrativo,random
+PH280667,isla_maipo,Administrativo,random
+PJ280474,isla_maipo,12 Horas,random
+PL261287,isla_maipo,Administrativo,random
+PM100488,isla_maipo,Administrativo,random
+PM130458,isla_maipo,Administrativo,random
+PM150468,isla_maipo,12 Horas - Dia,random
+PM290991,isla_maipo,Administrativo,random
+PN10391,isla_maipo,12 Horas - Noche,random
+PN181180,isla_maipo,Administrativo,random
+PP160194,isla_maipo,Fuera de planta,random
+PP210278,isla_maipo,12 Horas - Dia,random
+PP280385,isla_maipo,12 Horas - Noche,random
+PR240574,isla_maipo,Administrativo,random
+PR261095,isla_maipo,12 Horas - Noche,random
+PS121276,isla_maipo,Administrativo,random
+PZ241090,isla_maipo,Administrativo,random
+RA100857,isla_maipo,Administrativo,random
+RA111193,isla_maipo,Fuera de planta,random
+RA210980,isla_maipo,Administrativo,random
+RA70700,isla_maipo,Administrativo,random
+RC180181,isla_maipo,Administrativo,random
+RD100965,isla_maipo,12 Horas - Backup,random
+RD171071,isla_maipo,Administrativo,random
+RD180388,isla_maipo,12 Horas - Noche,random
+RH10469,isla_maipo,Administrativo,random
+RH131081,isla_maipo,Administrativo,random
+RH90179,isla_maipo,12 Horas,random
+RI281278,isla_maipo,Administrativo,random
+RL140454,isla_maipo,Fuera de planta,random
+RM10596,isla_maipo,12 Horas - Backup,random
+RM11080,isla_maipo,12 Horas - Dia,random
+RM190185,isla_maipo,12 Horas - Dia,random
+RM250477,isla_maipo,12 Horas - Noche,random
+RM60772,isla_maipo,Administrativo,random
+RM81096,isla_maipo,12 Horas - Backup,random
+RO151050,isla_maipo,Fuera de planta,random
+RO170192,isla_maipo,Administrativo,random
+RP271185,isla_maipo,12 Horas - Noche,random
+RR20794,isla_maipo,Administrativo,random
+RR310765,isla_maipo,Administrativo,random
+RR50173,isla_maipo,Administrativo,random
+RR60490,isla_maipo,Administrativo,random
+RS260862,isla_maipo,Administrativo,random
+RV10481,isla_maipo,Administrativo,random
+RV180552,isla_maipo,Fuera de planta,random
+SG141290,isla_maipo,12 Horas - Backup,random
+SG211296,isla_maipo,Administrativo,random
+SL200792,isla_maipo,Administrativo,random
+SM30495,isla_maipo,12 Horas - Backup,random
+SO110256,isla_maipo,Fuera de planta,random
+SO260362,isla_maipo,Administrativo,random
+SO60578,isla_maipo,Administrativo,random
+SP200288,isla_maipo,12 Horas - Dia,random
+SR291167,isla_maipo,Administrativo,random
+SR50786,isla_maipo,Administrativo,random
+SS250375,isla_maipo,Administrativo,random
+SV230688,isla_maipo,12 Horas - Dia,random
+TD230781,isla_maipo,12 Horas - Dia,random
+TF40782,isla_maipo,12 Horas - Dia,random
+TR140180,isla_maipo,Administrativo,random
+TR91269,isla_maipo,Administrativo,random
+TV240993,isla_maipo,Administrativo,random
+VA131092,isla_maipo,Administrativo,random
+VA40854,isla_maipo,Fuera de planta,random
+VB191279,isla_maipo,12 Horas,random
+VC60195,isla_maipo,12 Horas - Dia,random
+VG220291,isla_maipo,Administrativo,random
+VL300199,isla_maipo,Administrativo,random
+VN290977,isla_maipo,Administrativo,random
+VO140765,isla_maipo,Fuera de planta,random
+VP270893,isla_maipo,Administrativo,random
+VS170560,isla_maipo,Fuera de planta,random
+WE130798,isla_maipo,Fuera de planta,random
+YB60793,isla_maipo,12 Horas - Noche,random
+YC180187,isla_maipo,12 Horas - Dia,random
+YD70393,isla_maipo,Administrativo,random
+YM40584,isla_maipo,12 Horas - Dia,random
+YR290684,isla_maipo,Administrativo,random

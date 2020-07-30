@@ -23,19 +23,9 @@ class AlgoritmoBios:
     def tick(self):
         self.numero_tests = 0
     
-    def aplicar_test(self, precision_tests):        
-        #s_m = precision_tests['S_M']
-        #e_m = precision_tests['E_M']
-        #s_g = precision_tests['S_G']
-        #e_g = precision_tests['E_G']
-        e = precision_tests['E']
-        s = precision_tests['S'] 
-        
-        self.resultado_test = self.individuo.testear_ac(s, e)
-        
+     def aplicar_test(self, precision_tests):        
+        self.resultado_test = self.individuo.testear_ac(precision_tests)
         self.numero_tests += 1
-        #self.IgM = self.individuo.testear_IgM(s_m, e_m)
-        #self.IgG = self.individuo.testear_IgG(s_g, e_g)
         
     def asignar_estado(self):
         if (not self.IgM) and (not self.IgG):
@@ -70,7 +60,7 @@ class AlgoritmoBios:
             return self.poblacion 
 
         for ind in poblacion.values():
-            precision_actual_tests = precision_tests['precision'](ind.tiempo_infeccioso, ind.dia_aparicion_ac) 
+            precision_actual_tests = precision_tests['precision']
             self.individuo = ind
             
             if self.individuo.en_trabajo():

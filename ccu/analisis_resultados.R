@@ -1,18 +1,18 @@
 
 # Parametros simulacion
     
-alg =           c('HacerNada', 'Bios')# 'Bios', 'Bios', 'Bios', 'Bios')# rep(c('Bios', 'HacerNada'), each=8)
-frec_test =     c(0, 3, 5, 7, 10, 14)#rep(c(3, 0), each=8)#rep(c(0, 3, 0, 0), 20) 
+alg =           c('Bios')
+frec_test =     c(3, 5, 7, 10, 14)#rep(c(3, 0), each=8)#rep(c(0, 3, 0, 0), 20) 
 ctna_dur =      rep(14, 60)
 ctna_inic =     rep(0, 60)
-pob =           rep(340, 60)
+pob =           rep(100, 60)
 r0 =            rep(3, 50)
-tiempo =        rep(90, 60)
+tiempo =        rep(30, 60)
 iteraciones =   rep(30, 60)
-fecha =         rep('27-07', 60)
+fecha =         rep('19-07', 60)
 p_inic =        rep(0.0075, 16)
-ips =           rep(c('7.5'), 10)#rep(7.5, 40)
-sens =          rep(0.88, 69) #rep(c(0, 0.2, 0.4, 0.6, 0.8, 0.95, 0.97, 1), 2)
+ips =           rep(c('180.0'), 10)#rep(7.5, 40)
+sens =          rep(0.97, 69) #rep(c(0, 0.2, 0.4, 0.6, 0.8, 0.95, 0.97, 1), 2)
 nombre =        rep(c('No Protocol', 'ABT 3', 'Shift 14', 'Shut Down'), 20)
 pcr =           c('1. Sin-PCR', '1. Sin-PCR', '1. Sin-PCR', 
                   '2. PCR Inicial', '2. PCR Inicial', '2. PCR Inicial',
@@ -37,12 +37,12 @@ path_sim = function(n){
 }
 
 numero_infecciosos = function(sim){
-    X = 0:30
+    X = 0:3000
     aux2 = data.frame(X)
     aux2$infecciosos = 0
     
     out = read.csv(paste('../../datos_simulaciones/numero_infecciosos', sim, '.csv', sep='')) %>%
-        gather(tiempo, infecciosos, X0:X90) %>%
+        gather(tiempo, infecciosos, X0:X156) %>%
         mutate(tiempo = as.numeric(substr(tiempo, 2, 100))) %>%
         filter(tiempo == max(tiempo)) %>%
         select(X, infecciosos) %>%

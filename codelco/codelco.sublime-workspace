@@ -113,7 +113,7 @@
 			"file": "base/simulador.py",
 			"settings":
 			{
-				"buffer_size": 13710,
+				"buffer_size": 13671,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -131,7 +131,7 @@
 			"file": "correr_simulacion.py",
 			"settings":
 			{
-				"buffer_size": 1087,
+				"buffer_size": 1072,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -494,7 +494,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -510,8 +510,8 @@
 						"selection":
 						[
 							[
-								5068,
-								5068
+								1533,
+								1533
 							]
 						],
 						"settings":
@@ -521,7 +521,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 869.0,
+						"translation.y": 1279.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
@@ -554,7 +554,7 @@
 						"translation.y": 565.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -569,15 +569,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 13710,
+						"buffer_size": 13671,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4167,
-								4167
+								4118,
+								4118
 							]
 						],
 						"settings":
@@ -590,7 +590,7 @@
 						"translation.y": 1037.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -635,15 +635,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1087,
+						"buffer_size": 1072,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								409,
-								409
+								357,
+								357
 							]
 						],
 						"settings":
@@ -654,7 +654,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -850,7 +850,7 @@
 		],
 		"width": 0.0
 	},
-	"selected_group": 0,
+	"selected_group": 2,
 	"settings":
 	{
 	},

@@ -4,15 +4,15 @@ import datetime
 
 # Parametros
 
-alg =           ['HacerNada', 'BiosTurnos', 'BiosTurnos', 'BiosTurnos', 'Bios', 'Bios', 'Bios'] # 
-frec_test =     [0, 1, 7, 14, 1, 7, 14] * 2
+alg =           ['HacerNada', 'BiosTurnos', 'BiosTurnos', 'BiosTurnos', 'BiosTurnos'] # 
+frec_test =     [0, 0, 1, 7, 14] * 2
 ctna_dur =      [14] * 12
 ctna_inic =     [0] * 16 
 pob =           [1000] * 20
 r0 =            [3] * 20
 tiempo =        [92] * 16
 iteraciones =   [1000] * 20
-fecha =         ['29-07'] * 20
+fecha =         ['30-07'] * 20
 p_i =           [0.005, 0.005, 0.005, 0.005]  * 2
 dia_inicial =   '2020-07-27'
 # archivo =       'input_3.csv'

@@ -508,8 +508,8 @@
 						"selection":
 						[
 							[
-								1921,
-								1921
+								2933,
+								2933
 							]
 						],
 						"settings":
@@ -519,10 +519,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 713.0,
+						"translation.y": 690.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -640,8 +640,8 @@
 						"selection":
 						[
 							[
-								407,
-								407
+								325,
+								325
 							]
 						],
 						"settings":
@@ -652,7 +652,7 @@
 						"translation.y": 38.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -878,7 +878,7 @@
 		],
 		"width": 0.0
 	},
-	"selected_group": 0,
+	"selected_group": 2,
 	"settings":
 	{
 	},

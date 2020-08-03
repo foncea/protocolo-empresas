@@ -90,7 +90,7 @@ class SimuladorBase:
         trabajando = [ind for ind in self.poblacion.values() if (ind.actividad == 'trabajo')]
         infecciosos_trabajando = [ind for ind in trabajando if ind.estado == self.I]
 
-        self.p_contagio_diaria['trabajo'] = self.beta_empresa * len(infecciosos_trabajando) / max(1, len(trabajando)) / 2 + 3 / 700 * self.beta_poblacion / 2
+        self.p_contagio_diaria['trabajo'] = self.beta_empresa * len(infecciosos_trabajando) / max(1, len(trabajando)) 
 
         
     def tick(self):

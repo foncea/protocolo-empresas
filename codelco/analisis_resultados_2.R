@@ -1,19 +1,19 @@
 
 # Parametros simulacion
     
-alg =           c('HacerNada', 'Bios', 'Bios', 'Bios', 'BiosTurnos',  'BiosTurnos', 'BiosTurnos')
-frec_test =     c(0, 1, 7, 14, 1, 7, 14)#rep(c(3, 0), each=8)#rep(c(0, 3, 0, 0), 20) 
+alg =           c( 'BiosTurnos', 'BiosTurnos',  'BiosTurnos', 'BiosTurnos')
+frec_test =     c( 0, 1, 7, 14)#rep(c(3, 0), each=8)#rep(c(0, 3, 0, 0), 20) 
 ctna_dur =      rep(14, 60)
 ctna_inic =     rep(0, 60)
 pob =           rep(1000, 60)
 r0 =            rep(3, 50)
 tiempo =        rep(92, 60)
-iteraciones =   rep(33, 12)
+iteraciones =   rep(1000, 12)
 fecha =         rep('29-07', 60)
 p_inic =        rep(0.005, 16)
 ips =           rep(c('180.0'), 10)#rep(7.5, 40)
 sens =          rep(0.88, 12) #rep(c(0, 0.2, 0.4, 0.6, 0.8, 0.95, 0.97, 1), 2)
-nombre =        rep(c('Base', 'AC 2', 'AC 1', 'AC 0.5', 'AC 2 + Turnos',  'AC 1 + Turnos',  'AC 0.5 + Turnos'), 1)
+nombre =        rep(c('Turnos', 'AC 2/Semana + Turnos',  'AC 1/Semana + Turnos',  'AC 14 Dias + Turnos'), 1)
 pcr =           c('1. Sin-PCR', '1. Sin-PCR', '1. Sin-PCR', 
                   '2. PCR Inicial', '2. PCR Inicial', '2. PCR Inicial',
                   '3. PCR Inicial y Contagio', '3. PCR Inicial y Contagio', '3. PCR Inicial y Contagio')
@@ -156,7 +156,8 @@ trabajando_tiempo = function(sim){
     cv_it = resultados %>%
         group_by(Protocolo) %>%
         summarize(MEAN = mean(infecciosos), STD = sd(infecciosos), cv = MEAN / STD / sqrt(iteraciones[1])) 
-    cv_it
+    cv_it$Total_Infectados = cv_it$MEAN / 10
+    cv_it[order(cv_it$MEAN), c('Protocolo', "Total_Infectados", 'STD', 'cv')]
     cv_it[cv_it$Protocolo == 'HN', 'Protocolo'] = 'HacerNada'
     
     #cv_it %>% mutate(cv = scales::label_percent(accuracy=0.01)(cv)) %>% spread(key=Protocolo, value=cv) %>% xtable()
@@ -179,10 +180,10 @@ trabajando_tiempo = function(sim){
         mutate(Dias_Promedio_Extraccion = Dias_Inf / MEAN) 
    
    p1 = dias_infecciosos %>%
-       #mutate(Protocolo = factor(Protocolo, levels=nombre[c(2,3,1)])) %>%
-       ggplot(aes(x=Protocolo, y=Dias_Inf, fill=Protocolo)) +
+       mutate(Protocolo = factor(Protocolo, levels=nombre[c(2,3,4,5,6,7,1)])) %>%
+       ggplot(aes(x=Protocolo, y=Dias_Inf / pob[1], fill=Protocolo)) +
        geom_bar(stat='identity', position='dodge', color='black') +
-       ggtitle('Working-Days Infected at Work (5 Months, 100 Workers)') +
+       ggtitle('Dias Promedio ') +
        ylab('') + 
        xlab('') +
        #xlab(TeX("$R_0$")) + 
@@ -192,16 +193,30 @@ trabajando_tiempo = function(sim){
    p1
    p = merge(cv_it, dias_infecciosos, by=c('Protocolo')) %>%
        mutate(Dias_Promedio_Extraccion = Dias_Inf / MEAN) %>%
-       #mutate(Protocolo = factor(Protocolo, levels=nombre[c(2,3,1)])) %>%
+       mutate(Protocolo = factor(Protocolo, levels=nombre[c(5,6,7,2,3,4, 1)])) %>%
        ggplot(aes(x=Protocolo, y=Dias_Promedio_Extraccion, fill=Protocolo)) +
        geom_bar(stat='identity', position='dodge', color='black') +
-       ggtitle('Average number of days between infection and quarantine') +
+       ggtitle('Dias promedio de exposicion de un infeccioso en la empresa') +
        ylab('') + 
        xlab('') +
        #xlab(TeX('$R_0$')) +
        theme_bw() + 
        scale_fill_brewer(palette='Set3') +
        geom_text(aes(label=round(Dias_Promedio_Extraccion, digits=1)), position=position_dodge(width=0.9), vjust=-0.25) 
+   p
+   
+   p = merge(cv_it, dias_infecciosos, by=c('Protocolo')) %>%
+       mutate(Dias_Promedio_Extraccion = Dias_Inf / MEAN) %>%
+       mutate(Protocolo = factor(Protocolo, levels=nombre[c(2, 3,4,1)])) %>%
+       ggplot(aes(x=Protocolo, y=r0[1] * Dias_Promedio_Extraccion / 17.5, fill=Protocolo)) +
+       geom_bar(stat='identity', position='dodge', color='black') +
+       ggtitle(TeX('$R_e$ Ajustado')) +
+       ylab('') + 
+       xlab('') +
+       #xlab(TeX('$R_0$')) +
+       theme_bw() + 
+       scale_fill_brewer(palette='Set3') +
+       geom_text(aes(label=round(r0[1] * Dias_Promedio_Extraccion / 17.5, digits=1)), position=position_dodge(width=0.9), vjust=-0.25) 
    p
 }
 ggsave(paste('../plots/ABT_1_semana_07_07/Dias-hombre Infectados en Trabajo.pdf', sep=''), p1)
@@ -357,12 +372,17 @@ cv_it %>%
     aux['intervalo'] = 0
     
     p = resultados %>% 
+        mutate(Protocolo = factor(Protocolo, levels=nombre[c(1,2,4,3)])) %>%
     #    rbind(aux) %>%
-            ggplot(aes(x=tiempo, y=infecciosos, color=Protocolo)) +
-                geom_point(size=3)+
+            ggplot(aes(x=tiempo, y=infecciosos/1000, color=Protocolo)) +
+                xlab('Dias') +
+                scale_y_continuous(labels = scales::percent) +
+                geom_line() +
+                ylab("Porcentaje c/r al tamano de la empresa") +
+                #geom_line(size=1.5)+
                 #geom_point(data=resultados[resultados$Protocolo == 'Realidad', ]) +
                 #geom_line(data=resultados[resultados$Protocolo == 'Simulacion', ]) + 
-                ggtitle('Numero total de infecciosos acumulados a traves del tiempo') 
+                ggtitle('Total de infecciosos acumulados a traves del tiempo') 
                 #geom_ribbon(aes(ymin = infecciosos_sintomaticos - intervalo/4, ymax = infecciosos_sintomaticos + intervalo/4), alpha=0.2)
     p
     
@@ -389,48 +409,14 @@ seir %>%
     
     resultados %>%
         filter(actividad == 'cuarentena') %>%
-        mutate(cantidad = ifelse(Protocolo == 'Con AC', cantidad - 7 , cantidad)) %>% 
+        mutate(cantidad = ifelse(Protocolo == 'Con AC', cantidad , cantidad)) %>% 
         ggplot(aes(x=tiempo, y=cantidad/N, color=Protocolo)) +
             geom_line() +
         ggtitle('Porcentaje de trabajadores en cuarentena') +
         scale_y_continuous(labels = scales::percent) 
     
-    resultados['dias'] = resultados['tiempo'] / 24
-    resultados['infecciosos_sintomaticos'] = resultados['infecciosos'] / 2
-    
-    resultados['Protocolo'] = 'Simulacion'
-    
-    
-    aux = data.frame(tiempo=c(1, 79, 59, 63, 74, 74, 78, 67, 102))
-    aux$Protocolo = 'Realidad'
-    aux = aux[order(aux$tiempo), ]
-    aux$infecciosos = 1:nrow(aux)
-    aux['tiempo'] = aux['dias'] * 24
-    aux['infecciosos_sintomaticos'] = aux['infecciosos']
-    aux['intervalo'] = 0
-    
-    p = resultados %>% 
-        #    rbind(aux) %>%
-        ggplot(aes(x=tiempo, y=infecciosos, color=Protocolo)) +
-        geom_point(size=3)+
-        #geom_point(data=resultados[resultados$Protocolo == 'Realidad', ]) +
-        #geom_line(data=resultados[resultados$Protocolo == 'Simulacion', ]) + 
-        ggtitle('Numero total de infecciosos acumulados a traves del tiempo') 
-    #geom_ribbon(aes(ymin = infecciosos_sintomaticos - intervalo/4, ymax = infecciosos_sintomaticos + intervalo/4), alpha=0.2)
-    p
-    
-    ggplot(df, aes(x, y))+
-        geom_point(data=df[df$group==2, ])+
-        geom_line(data=df[df$group==1, ])
+   
 }
-
-seir[seir['estado'] == 'i', 'estado'] = 'infeccioso'
-
-seir %>%
-    ggplot(aes(x=tiempo/24, y=cantidad, color=estado)) +
-    geom_line()
-
-
 
 
 

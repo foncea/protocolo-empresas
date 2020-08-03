@@ -81,7 +81,7 @@ input_data = pd.read_csv(sys.argv[12])
 input_data = input_data.loc[lambda x: x['tipo_turno'] != 'Fuera de planta'].copy()
 print(input_data['tipo_turno'].value_counts())
 info_poblacion = [input_data.reset_index()]
-R0 = [{'empresa': float(sys.argv[6]), 'poblacion': 2.5}]   #R0_empresa
+R0 = [{'empresa': float(sys.argv[6]), 'poblacion': 1.3}]   #R0_empresa
 
 
 # Parametros algoritmo

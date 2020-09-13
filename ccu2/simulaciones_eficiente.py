@@ -81,7 +81,7 @@ input_data = pd.read_csv(sys.argv[12])
 input_data = input_data.loc[lambda x: x['tipo_turno'] != 'Fuera de planta'].copy()
 print(input_data['tipo_turno'].value_counts())
 info_poblacion = [input_data.reset_index()]
-R0 = [{'empresa': float(sys.argv[6]), 'poblacion': 1.3}]   #R0_empresa
+R0 = [{'empresa': float(sys.argv[6]), 'poblacion': float(sys.argv[13])}]   #R0_empresa
 
 
 # Parametros algoritmo
@@ -126,6 +126,8 @@ resultados_simulacion = []
 resultados_df = pd.DataFrame()
 numero_tests = {}
 numero_infecciosos = {}
+numero_observado = {}
+
 u = 1
 
 cv =  lambda x: np.std(x) / np.mean(x) / np.sqrt(len(x))
@@ -150,6 +152,7 @@ for p in parametros:
         resultados_df = pd.concat([resultados_df, sim.df_estados_actividades_obs], axis=0)
         numero_tests[n] = sim.historia_numero_tests 
         numero_infecciosos[n] = sim.numero_infectados_totales
+        numero_observado[n] = sim.numero_observados_totales
 
         alg.reset()
 
@@ -168,12 +171,14 @@ r0 = sys.argv[6]
 iteraciones = sys.argv[8]
 fecha = sys.argv[9]
 p_i = sys.argv[10]
-sufijo = '_' + alg + '_frec=' + frec + '_pob=' + pob + '_cinic=' + cinic + '_r0=' + r0 + '_pi=' + p_i + '_iter=' + iteraciones + '_' + fecha 
+r0_pob = sys.argv[13]
+sufijo = '_' + alg + '_frec=' + frec + '_pob=' + pob + '_r0=' + r0 + '_r0pob=' + r0_pob + '_pi=' + p_i + '_iter=' + iteraciones + '_' + fecha 
 
 resultados_df[['estado', 'estado_observado', 'actividad', 'sintomas']] = pd.DataFrame(resultados_df.index.tolist(), index=resultados_df.index)  
 resultados_df.rename(columns={0: 'cantidad'}).to_csv('../../datos_simulaciones/resultados' + sufijo + '.csv', index=False)
 
 pd.DataFrame.from_dict(numero_tests).T.reset_index().to_csv('../../datos_simulaciones/numero_tests' + sufijo + '.csv')
 pd.DataFrame.from_dict(numero_infecciosos).T.reset_index().to_csv('../../datos_simulaciones/numero_infecciosos' + sufijo + '.csv')
+pd.DataFrame.from_dict(numero_observado).T.reset_index().to_csv('../../datos_simulaciones/numero_observado' + sufijo + '.csv')
 
 #print('Resultados guardados en disco')

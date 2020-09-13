@@ -92,11 +92,13 @@
 	"buffers":
 	[
 		{
+			"contents": "import numpy as np\nimport datetime as dt\n\nclass AlgoritmoBios:\n    def __init__(self, cuarentena, frecuencia_test):\n        self.algoritmo_id = 'anticuerpos'\n        self.frecuencia_test = frecuencia_test\n        self.duracion_cuarentena = cuarentena['duracion']\n        self.cuarentena_inicial = cuarentena['inicial']\n\n        self.individuo = None\n\n        self.tiempo = 0\n        \n        self.numero_tests = 0\n        \n        self.tiempo_pcr = 4  #agregar como precision test\n    \n    def reset(self):\n        self.numero_tests = 0\n        self.tiempo = 0\n        self.individuo = None\n        \n    def tick(self):\n        self.numero_tests = 0\n    \n    def aplicar_test(self, precision_tests):        \n        self.resultado_test = self.individuo.testear_ac(precision_tests)\n        self.numero_tests += 1\n        \n    def asignar_estado(self):\n        if (not self.IgM) and (not self.IgG):\n            self.individuo.cambiar_estado_observado('susceptible')\n        elif self.IgM:\n            self.individuo.cambiar_estado_observado('infeccioso')\n        else:\n            self.individuo.cambiar_estado_observado('recuperado')\n            \n    def asignar_estado_segun_test(self):\n        if self.resultado_test:\n            self.individuo.cambiar_estado_observado('infeccioso')\n        else:\n            self.individuo.cambiar_estado_observado('susceptible')\n            \n    def asignar_actividad(self):\n        if self.individuo.estado_observado == 'infeccioso':\n            self.individuo.aplicar_cuarentena()\n        else:\n            self.individuo.aplicar_trabajo()\n            \n    def decidir(self, poblacion, tiempo, dia, precision_tests):\n        self.poblacion = poblacion\n        if tiempo < self.cuarentena_inicial:\n            for ind in poblacion.values():\n                self.individuo = ind\n                self.individuo.cuarentena_nacional = True\n                self.individuo.aplicar_cuarentena()\n                if self.individuo.sintomatico:\n                    self.individuo.cambiar_estado_observado('infeccioso')\n                self.poblacion[self.individuo.id] = self.individuo\n            return self.poblacion \n\n        if self.frecuencia_test == 1:\n            testear = dia.isoweekday() in [1, 4]\n        elif self.frecuencia_test == 0:\n            testear = False\n        else:\n            testear = tiempo % self.frecuencia_test == 1\n\n        for ind in poblacion.values():\n            precision_actual_tests = precision_tests['precision']\n            self.individuo = ind\n            \n            if self.individuo.en_trabajo():\n                if self.individuo.sintomatico:\n                    self.individuo.cambiar_estado_observado('infeccioso')\n                elif testear and (self.individuo.estado_observado == 'susceptible'):\n                    self.aplicar_test(precision_actual_tests)\n                    self.asignar_estado_segun_test()\n            elif (self.individuo.tiempo_cuarentena > self.tiempo_pcr) and (self.individuo.estado == 'susceptible'):\n                self.individuo.cambiar_estado_observado('susceptible')\n            elif self.individuo.tiempo_cuarentena > self.duracion_cuarentena:\n                if tiempo >= self.individuo.tiempo_inicio_infeccion + self.individuo.dias_sintomas[1] + self.duracion_cuarentena:\n                    self.individuo.cambiar_estado_observado('recuperado')\n                    \n            self.asignar_actividad()\n            \n        return self.poblacion    \n\nclass AlgoritmoBiosTurnos(AlgoritmoBios):\n    def __init__(self, duracion_cuarentena, frecuencia_test):\n        super().__init__(duracion_cuarentena, frecuencia_test)\n\n        self.turno = 0\n        self.algoritmo_id = 'anticuerpos + turnos'\n\n    def reset(self):\n        super().reset()\n        self.turnos = 0\n\n    def decidir(self, poblacion, tiempo, dia, precision_tests):\n        self.poblacion = poblacion\n        tamano_turno = int(len(self.poblacion) / 2)\n        self.particion_poblacion = [[i for i in self.poblacion if i < tamano_turno], \n                                    [i for i in self.poblacion if i >= tamano_turno]]\n        if tiempo % 14 == 0:\n            self.turno = 1 - self.turno\n            self.poblacion_activa = dict((i, poblacion[i]) for i in self.particion_poblacion[self.turno])\n            self.poblacion_espera = dict((i, poblacion[i]) for i in self.particion_poblacion[1 - self.turno])\n\n        if self.frecuencia_test == 1:\n            testear = dia.isoweekday() in [1, 4]\n        elif self.frecuencia_test == 0:\n            testear = False\n        elif self.frecuencia_test == 15:\n            testear = tiempo % 14 == 8\n        else:\n            testear = tiempo % self.frecuencia_test == 1\n\n        for ind in self.poblacion_activa.values():\n            precision_actual_tests = precision_tests['precision']\n            self.individuo = ind\n            \n            if self.individuo.en_trabajo():\n                if self.individuo.sintomatico:\n                    self.individuo.cambiar_estado_observado('infeccioso')\n                elif testear and (self.individuo.estado_observado == 'susceptible'):\n                    self.aplicar_test(precision_actual_tests)\n                    self.asignar_estado_segun_test()\n            elif (self.individuo.tiempo_cuarentena > self.tiempo_pcr) and (self.individuo.estado == 'susceptible'):\n                self.individuo.cambiar_estado_observado('susceptible')\n            elif self.individuo.tiempo_cuarentena > self.duracion_cuarentena:\n                if tiempo >= self.individuo.tiempo_inicio_infeccion + self.individuo.dias_sintomas[1] + self.duracion_cuarentena:\n                    self.individuo.cambiar_estado_observado('recuperado')\n\n            self.asignar_actividad()\n            self.poblacion[self.individuo.id] = self.individuo\n\n        for ind in self.poblacion_espera.values():\n            self.individuo = ind\n            if self.individuo.sintomatico:\n                self.individuo.cambiar_estado_observado('infeccioso')\n            self.individuo.aplicar_cuarentena()\n            self.poblacion[self.individuo.id] = self.individuo\n\n        return self.poblacion  \n\n\nclass AlgoritmoPCRTurnos(AlgoritmoBios):\n    def __init__(self, duracion_cuarentena, frecuencia_test):\n        super().__init__(duracion_cuarentena, frecuencia_test)\n\n        self.turno = 0\n        self.algoritmo_id = 'anticuerpos + turnos'\n\n    def reset(self):\n        super().reset()\n        self.turnos = 0\n\n    def aplicar_test(self):        \n        self.resultado_test = self.individuo.testear_PCR()\n        self.numero_tests += 1\n\n    def decidir(self, poblacion, tiempo, dia, precision_tests):\n        self.poblacion = poblacion\n        tamano_turno = int(len(self.poblacion) / 2)\n        self.particion_poblacion = [[i for i in self.poblacion if i < tamano_turno], \n                                    [i for i in self.poblacion if i >= tamano_turno]]\n        if tiempo % 14 == 0:\n            self.turno = 1 - self.turno\n            self.poblacion_activa = dict((i, poblacion[i]) for i in self.particion_poblacion[self.turno])\n            self.poblacion_espera = dict((i, poblacion[i]) for i in self.particion_poblacion[1 - self.turno])\n\n        if self.frecuencia_test == 1:\n            testear = dia.isoweekday() in [1, 4]\n        elif self.frecuencia_test == 0:\n            testear = False\n        elif self.frecuencia_test == 15:\n            testear = tiempo % 14 == 7\n        else:\n            testear = tiempo % self.frecuencia_test == 0\n\n        for ind in self.poblacion_activa.values():\n            precision_actual_tests = precision_tests['precision']\n            self.individuo = ind\n            \n            if self.individuo.en_trabajo():\n                if self.individuo.sintomatico:\n                    self.individuo.cambiar_estado_observado('infeccioso')\n                elif testear and (self.individuo.estado_observado == 'susceptible'):\n                    self.aplicar_test()\n                    self.asignar_estado_segun_test()\n            elif (self.individuo.tiempo_cuarentena > self.tiempo_pcr) and (self.individuo.estado == 'susceptible'):\n                self.individuo.cambiar_estado_observado('susceptible')\n            elif self.individuo.tiempo_cuarentena > self.duracion_cuarentena:\n                if tiempo >= self.individuo.tiempo_inicio_infeccion + self.individuo.dias_sintomas[1] + self.duracion_cuarentena:\n                    self.individuo.cambiar_estado_observado('recuperado')\n\n            self.asignar_actividad()\n            self.poblacion[self.individuo.id] = self.individuo\n\n        for ind in self.poblacion_espera.values():\n            self.individuo = ind\n            if self.individuo.sintomatico:\n                self.individuo.cambiar_estado_observado('infeccioso')\n            self.individuo.aplicar_cuarentena()\n            self.poblacion[self.individuo.id] = self.individuo\n\n        return self.poblacion        \n\n\nclass AlgoritmoBiosTurnos2(AlgoritmoBios):\n    def __init__(self, duracion_cuarentena, frecuencia_test):\n        super().__init__(duracion_cuarentena, frecuencia_test)\n\n        self.turno = 0\n        self.algoritmo_id = 'anticuerpos + turnos'\n\n    def reset(self):\n        super().reset()\n        self.turnos = 0\n\n    def decidir(self, poblacion, tiempo, precision_tests):\n        self.poblacion = poblacion\n        if tiempo < self.cuarentena_inicial:\n            for ind in poblacion.values():\n                self.individuo = ind\n                self.individuo.cuarentena_nacional = True\n                self.individuo.aplicar_cuarentena()\n                if self.individuo.sintomatico:\n                    self.individuo.cambiar_estado_observado('infeccioso')\n                self.poblacion[self.individuo.id] = self.individuo\n            return self.poblacion \n\n        tamano_turno = int(len(poblacion) / 2)\n        self.id_particion_poblacion = [[i for i in poblacion if i < tamano_turno], [i for i in poblacion if i >= tamano_turno]]\n\n        if tiempo % 14 == 0:\n            self.turno = 1 - self.turno\n            self.poblacion_activa = dict((i, poblacion[i]) for i in self.id_particion_poblacion[self.turno])\n            self.poblacion_espera = dict((i, poblacion[i]) for i in self.id_particion_poblacion[1 - self.turno])\n\n        for ind in self.poblacion_activa.values():\n            precision_actual_tests = precision_tests['precision'](ind.tiempo_infeccioso, ind.dia_aparicion_ac) \n            self.individuo = ind\n            \n            if self.individuo.en_trabajo():\n                if self.individuo.estado_observado == 'infeccioso':\n                    self.individuo.aplicar_cuarentena()\n                if self.individuo.sintomatico:\n                    self.individuo.cambiar_estado_observado('infeccioso')\n                elif (tiempo % self.frecuencia_test == 0) and (self.individuo.estado_observado == 'susceptible'):\n                    self.aplicar_test(precision_actual_tests)\n                    self.asignar_estado_segun_test()\n            elif (self.individuo.tiempo_cuarentena > self.tiempo_pcr) and (self.individuo.estado == 'susceptible'):\n                self.individuo.cambiar_estado_observado('susceptible')\n            elif self.individuo.tiempo_cuarentena > self.duracion_cuarentena:\n                if tiempo >= self.individuo.tiempo_inicio_infeccion + self.individuo.dias_sintomas[1] + self.duracion_cuarentena:\n                    self.individuo.cambiar_estado_observado('recuperado')\n                else:\n                    self.individuo.aplicar_cuarentena()\n    \n            self.asignar_actividad()\n            self.poblacion[self.individuo.id] = self.individuo\n\n        for ind in self.poblacion_espera.values():\n            self.individuo = ind\n            if self.individuo.sintomatico:\n                self.individuo.cambiar_estado_observado('infeccioso')\n            self.individuo.aplicar_cuarentena()\n            self.poblacion[self.individuo.id] = self.individuo\n\n        return self.poblacion        \n\nclass AlgoritmoHacerNada(AlgoritmoBios):\n    def __init__(self, cuarentena, frecuencia_test):\n        super().__init__(cuarentena, frecuencia_test)\n        self.frecuencia_test = float('nan')\n        self.algoritmo_id = 'hacer nada'\n\nclass AlgoritmoHacerNadaTurnos(AlgoritmoBiosTurnos):\n    def __init__(self, cuarentena, frecuencia_test):\n        super().__init__(cuarentena, frecuencia_test)\n        self.frecuencia_test = float('nan')\n        self.algoritmo_id = 'hacer nada + turnos'\n\nclass AlgoritmoLiteralmenteHacerNada(AlgoritmoBios):\n    def decidir(self, poblacion, tiempo, precision_tests):\n        return poblacion\n\n'''    \n#class AlgoritmoHacerNada:\n    def __init__(self, cuarentena):\n        self.numero_tests = 0\n        self.duracion_cuarentena = cuarentena['duracion']\n        self.cuarentena_inicial = cuarentena['inicial']\n    \n    def decidir(self, poblacion, tiempo, precision_tests):\n        self.poblacion = {}\n        for ind in poblacion.values():\n            self.individuo = ind\n            if self.individuo.en_trabajo():\n                if self.individuo.sintomatico:\n                    self.individuo.cambiar_estado_observado('infeccioso')\n                    self.individuo.aplicar_cuarentena()\n            elif tiempo > self.duracion_cuarentena + self.individuo.dias_sintomas[1] + self.individuo.tiempo_inicio_infeccion:\n                self.individuo.cambiar_estado_observado('recuperado')\n                self.individuo.aplicar_trabajo()\n            \n            self.poblacion[self.individuo.id] = self.individuo\n        return self.poblacion\n    \n    def tick(self):\n        pass\n    \n    def reset(self):\n        self.numero_tests = 0\n#class AlgoritmoHacerNadaTurnos(AlgoritmoHacerNada):\n    def __init__(self, duracion_cuarentena):\n        super().__init__(duracion_cuarentena)\n        self.turno = 0\n\n\n    def reset(self):\n        super().reset()\n        self.turno = 0\n\n    def decidir(self, poblacion, tiempo, precision_tests):\n        tamano_turno = int(len(poblacion) / 2)\n        self.id_particion_poblacion = [[i for i in poblacion if i < tamano_turno], [i for i in poblacion if i >= tamano_turno]]\n\n        if tiempo % 14 == 0:\n            self.turno = 1 - self.turno\n            self.poblacion_activa = dict((i, poblacion[i]) for i in self.id_particion_poblacion[self.turno])\n            self.poblacion_espera = dict((i, poblacion[i]) for i in self.id_particion_poblacion[1 - self.turno])\n\n        self.poblacion = poblacion\n\n        for ind in self.poblacion_activa.values():\n            self.individuo = ind\n            if self.individuo.en_trabajo():\n                if self.individuo.estado_observado == 'infeccioso':\n                    self.individuo.aplicar_cuarentena()\n                if self.individuo.sintomatico:\n                    self.individuo.cambiar_estado_observado('infeccioso')\n                    self.individuo.aplicar_cuarentena()\n            elif tiempo > self.duracion_cuarentena + self.individuo.dias_sintomas[1] + self.individuo.tiempo_inicio_infeccion:\n                self.individuo.cambiar_estado_observado('recuperado')\n                self.individuo.aplicar_trabajo()\n            \n            self.poblacion[self.individuo.id] = self.individuo\n\n        for ind in self.poblacion_espera.values():\n            self.individuo = ind\n            if self.individuo.sintomatico:\n                self.individuo.cambiar_estado_observado('infeccioso')\n            self.individuo.aplicar_cuarentena()\n            self.poblacion[self.individuo.id] = self.individuo\n\n        return self.poblacion\n'''\n\nclass AlgoritmoHacerNadaCerrar:\n    def __init__(self, cuarentena):\n        self.algoritmo_id = 'hacer nada + cerrar'\n        self.tiempo_cuarentena = 0\n        self.cerrado = False\n        self.numero_tests = 0\n        self.duracion_cuarentena = cuarentena['duracion']\n        self.cuarentena_inicial = cuarentena['inicial']\n        \n    def reset(self):\n        self.tiempo_cuarentena = 0\n        self.tiempo = 0\n        self.individuo = None\n        self.cerrado = False\n        self.numero_tests = 0\n        \n    def cerrar(self, poblacion):\n        self.poblacion = poblacion\n        self.cerrado = True\n        for ind in poblacion.values():\n            self.individuo = ind\n            if self.individuo.sintomatico:\n                self.individuo.cambiar_estado_observado('infeccioso')\n            self.individuo.aplicar_cuarentena()\n            self.poblacion[self.individuo.id] = self.individuo\n        return self.poblacion        \n    \n    def abrir(self, poblacion):\n        self.tiempo_cuarentena = 0\n        self.poblacion = {}\n        self.cerrado = False\n        for ind in poblacion.values():\n            self.individuo = ind\n            if not self.individuo.sintomatico:\n                self.individuo.cambiar_estado_observado('susceptible')\n                self.individuo.aplicar_trabajo()                \n            self.poblacion[self.individuo.id] = self.individuo\n        return self.poblacion  \n        \n    def decidir(self, poblacion, tiempo, precision_tests):\n        self.poblacion = poblacion\n        if tiempo < self.cuarentena_inicial:\n            for ind in poblacion.values():\n                self.individuo = ind\n                self.individuo.cuarentena_nacional = True\n                self.individuo.aplicar_cuarentena()\n                if self.individuo.sintomatico:\n                    self.individuo.cambiar_estado_observado('infeccioso')\n                self.poblacion[self.individuo.id] = self.individuo\n            return self.poblacion \n\n        if self.cerrado:\n            self.tiempo_cuarentena += 1\n            if self.tiempo_cuarentena > self.duracion_cuarentena:\n                return self.abrir(poblacion)\n            return self.poblacion\n        for ind in poblacion.values():\n            self.individuo = ind\n            if self.individuo.en_trabajo():\n                if self.individuo.sintomatico:\n                    return self.cerrar(poblacion)\n            elif self.individuo.sintomatico:\n                self.individuo.cambiar_estado_observado('infeccioso')\n            elif tiempo > self.duracion_cuarentena + self.individuo.dias_sintomas[1] + self.individuo.tiempo_inicio_infeccion:\n                    self.individuo.cambiar_estado_observado('recuperado')\n                    self.individuo.aplicar_trabajo()\n                    self.poblacion[self.individuo.id] = self.individuo\n            \n        return self.poblacion\n    \n    def tick(self):\n        pass\n          \n'''\nclass AlgoritmoBiosCerrar(AlgoritmoBios):\n    def __init__(self, duracion_cuarentena, frecuencia_test):\n        super().__init__(duracion_cuarentena, frecuencia_test)\n\n        self.tiempo_cuarentena = 0\n        self.cerrado = False\n\n    def reset(self)\n        self.tiempo_cuarentena = 0\n        self.cerrado = False\n        self.numero_tests = 0\n        self.tiempo = 0\n        self.individuo = None\n        \n\n    def cerrar(self, poblacion):\n        self.poblacion = poblacion\n        self.cerrado = True\n        for ind in poblacion.values():\n            self.individuo = ind\n            if self.individuo.sintomatico:\n                self.individuo.cambiar_estado_observado('infeccioso')\n            self.individuo.aplicar_cuarentena()\n            self.poblacion[self.individuo.id] = self.individuo\n        return self.poblacion        \n    \n    def abrir(self, poblacion):\n        self.tiempo_cuarentena = 0\n        self.poblacion = {}\n        self.cerrado = False\n        for ind in poblacion.values():\n            self.individuo = ind\n            if not self.individuo.sintomatico and self.individuo.tiempo_inicio_infeccion == 0:\n                self.individuo.cambiar_estado_observado('susceptible')\n                self.individuo.aplicar_trabajo()                \n            if self.individuo.tiempo_cuarentena > self.duracion_cuarentena:\n                if tiempo >= self.individuo.tiempo_inicio_infeccion + self.individuo.dias_sintomas[1] + self.duracion_cuarentena:\n                    self.individuo.cambiar_estado_observado('recuperado')\n                    self.individuo.aplicar_trabajo()\n            self.poblacion[self.individuo.id] = self.individuo\n        return self.poblacion  \n\n    def decidir(self, poblacion, tiempo, precision_tests):\n        self.poblacion = poblacion\n        if self.cerrado:\n            self.tiempo_cuarentena =+ 1\n            for ind in poblacion.values():\n                self.individuo = ind\n                if self.individuo.sintomatico:\n                    self.individuo.cambiar_estado_observado('infeccioso')\n            if self.tiempo_cuarentena > self.duracion_cuarentena:\n                return self.abrir(poblacion)\n            return self.poblacion\n\n        for ind in poblacion.values():\n            precision_actual_tests = precision_tests['precision'](ind.tiempo_infeccioso, ind.dia_aparicion_ac) \n            self.individuo = ind\n            \n            if self.individuo.en_trabajo():\n                if self.individuo.sintomatico:\n                    self.individuo.cambiar_estado_observado('infeccioso')\n                    return self.cerrar(poblacion)\n                elif (tiempo % self.frecuencia_test == 0) and (self.individuo.estado_observado == 'susceptible'):\n                    self.aplicar_test(precision_actual_tests)\n                    self.asignar_estado_segun_test()\n                    if self.individuo.estado_observado == 'infeccioso' and self.individuo.estado == 'infeccioso':\n                        return self.cerrar(poblacion)\n            #elif (self.individuo.tiempo_cuarentena > self.tiempo_pcr) and (self.individuo.estado == 'susceptible'):\n             #   self.individuo.cambiar_estado_observado('susceptible')\n            elif self.individuo.tiempo_cuarentena > self.duracion_cuarentena:\n                if tiempo >= self.individuo.tiempo_inicio_infeccion + self.individuo.dias_sintomas[1] + self.duracion_cuarentena:\n                    self.individuo.cambiar_estado_observado('recuperado')\n                    \n            self.asignar_actividad()\n            self.poblacion[self.individuo.id] = self.individuo\n            \n        return self.poblacion    \n'''      \n                \n            \n            \n            \n        \n                \n            \n        ",
 			"file": "base/algoritmos.py",
+			"file_size": 22268,
+			"file_write_time": 132412232683868733,
 			"settings":
 			{
-				"buffer_size": 19410,
-				"encoding": "UTF-8",
+				"buffer_size": 22265,
 				"line_ending": "Unix"
 			}
 		},
@@ -104,7 +106,7 @@
 			"file": "simulaciones_eficiente.py",
 			"settings":
 			{
-				"buffer_size": 6730,
+				"buffer_size": 6618,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -122,7 +124,7 @@
 			"file": "base/individuo.py",
 			"settings":
 			{
-				"buffer_size": 8440,
+				"buffer_size": 8769,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -131,7 +133,7 @@
 			"file": "correr_simulacion.py",
 			"settings":
 			{
-				"buffer_size": 1072,
+				"buffer_size": 1111,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -503,15 +505,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 19410,
+						"buffer_size": 22265,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1533,
-								1533
+								7421,
+								7421
 							]
 						],
 						"settings":
@@ -521,10 +523,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1279.0,
+						"translation.y": 1841.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -533,15 +535,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6730,
+						"buffer_size": 6618,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1929,
-								1929
+								2002,
+								2002
 							]
 						],
 						"settings":
@@ -551,7 +553,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 565.0,
+						"translation.y": 306.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 3,
@@ -560,7 +562,7 @@
 			]
 		},
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -576,8 +578,8 @@
 						"selection":
 						[
 							[
-								4118,
-								4118
+								1420,
+								1420
 							]
 						],
 						"settings":
@@ -587,10 +589,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1037.0,
+						"translation.y": 105.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
@@ -599,15 +601,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 8440,
+						"buffer_size": 8769,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2331,
-								2331
+								1571,
+								1571
 							]
 						],
 						"settings":
@@ -617,10 +619,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1325.0,
+						"translation.y": 50.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
@@ -635,15 +637,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1072,
+						"buffer_size": 1111,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								357,
-								357
+								375,
+								375
 							]
 						],
 						"settings":

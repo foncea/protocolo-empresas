@@ -1,6 +1,5 @@
-from base.simulador import SimuladorBase, SimuladorEficiente
-# from base.seir.simulador_ex import SimuladorBase, SimuladorEficiente, SimuladorRoles, SimuladorFamilias, Simulador2
-from base.algoritmos import AlgoritmoBios, AlgoritmoHacerNada, AlgoritmoBiosTurnos
+from base.simulador import *
+from base.algoritmos import *
 from base.individuo import Individuo
 import numpy as np
 import pandas as pd
@@ -81,13 +80,14 @@ tamano_poblacion = [int(sys.argv[5])]
 # input_data = input_data.loc[lambda x: x['tipo_turno'] != 'Fuera de planta'].copy()
 # print(input_data['tipo_turno'].value_counts())
 # info_poblacion = [input_data.reset_index()]
-R0 = [{'empresa': float(sys.argv[6]), 'poblacion': 1.6}]   #R0_empresa
+R0 = [{'empresa': float(sys.argv[6]), 'poblacion': float(sys.argv[6])}]   #R0_empresa
 
 
 # Parametros algoritmo
 lista_algoritmos = {'Bios': lambda x: AlgoritmoBios(x[0], x[1]),
                     'HacerNada': lambda x: AlgoritmoHacerNada(x[0], x[1]),
-                    'BiosTurnos' : lambda x: AlgoritmoBiosTurnos(x[0], x[1])
+                    'BiosTurnos' : lambda x: AlgoritmoBiosTurnos(x[0], x[1]),
+                    'PCRTurnos': lambda x: AlgoritmoPCRTurnos(x[0], x[1]),
                     }
 usar_algoritmo = str(sys.argv[1]) #'HacerNadaCerrar'
 frecuencia_test = [int(sys.argv[2])] #[0]
@@ -144,6 +144,7 @@ def umbral_cv(n, df, u):
 for p in parametros:
     alg = lista_algoritmos[usar_algoritmo]([p['cuarentena'], p['frecuencia_test']])
     for n in trange(numero_iteraciones):
+        np.random.seed(n + 1)
         sim = SimuladorEficiente(p['info_poblacion'], p['precision_test'], p['probabilidades'], 0, p['R0'], dia_inicial)
         sim.simular(alg, tiempo_simulacion)
 

@@ -4,6 +4,22 @@
 		"selected_items":
 		[
 			[
+				"aplicar_",
+				"aplicar_cuarentena"
+			],
+			[
+				"Al",
+				"AlgoritmoHacerNada"
+			],
+			[
+				"pro",
+				"protocolo_frec"
+			],
+			[
+				"protoc",
+				"protocolos_simulados"
+			],
+			[
 				"infeccio",
 				"infecciosos_trabajando"
 			],
@@ -92,57 +108,66 @@
 	"buffers":
 	[
 		{
-			"file": "simulaciones_eficiente.py",
+			"file": "simulador.py",
 			"settings":
 			{
-				"buffer_size": 6871,
+				"buffer_size": 13550,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/simulaciones_eficiente.py",
+			"settings":
+			{
+				"buffer_size": 7211,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "base/individuo.py",
+			"file": "/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/codelco/simulaciones_eficiente.py",
 			"settings":
 			{
-				"buffer_size": 6031,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "import numpy as np\nimport pandas as pd\nfrom .individuo import Individuo\nfrom collections import Counter, defaultdict\nimport datetime as dt\n\n\nclass SimuladorBase:\n    def __init__(self, info_poblacion, precision_tests, probabilidad, duracion_infeccion, R0, dia_inicial):\n        self.info_poblacion = info_poblacion\n        self.tamano_poblacion = info_poblacion.shape[0]\n        self.precision_tests = precision_tests\n        self.probabilidad = probabilidad\n        self.S = 'susceptible'\n        self.E = 'expuesto'\n        self.I = 'infeccioso'\n        self.R = 'recuperado'\n        self.duracion_infeccion = duracion_infeccion\n        self.R0_empresa = R0['empresa']\n        self.R0_poblacion = R0['poblacion']\n        self.dia_inicial = dia_inicial\n\n        self.alpha = 1 / 3  #periodo de incubacion\n        self.gamma = 1 / 18 #periodo medio de infeccion\n        self.beta_poblacion = self.gamma * self.R0_poblacion\n        self.beta_empresa = self.gamma * self.R0_empresa\n        self.p_contagio_diaria = {'trabajo': self.probabilidad[self.I] * self.beta_empresa,\n                                  'cuarentena': self.probabilidad[self.I] * self.beta_poblacion}\n        \n        self.tiempo = 0\n        self.dia = dia_inicial\n\n        self.poblacion = self.crear_poblacion()\n\n        self.historia_numero_tests = [0]\n        self.historia_infectados_totales = {ind.id for ind in self.poblacion.values() if ind.estado == self.I}\n        self.numero_infectados_totales = [len(self.historia_infectados_totales)]\n\n        self.historia_observados_totales = {ind.id for ind in self.poblacion.values() if ind.estado == self.I and ind.estado_observado == self.I}\n        self.numero_observados_totales = [len(self.historia_observados_totales)]\n\n    def crear_poblacion(self):\n        poblacion = {}\n        lista_estados = [self.S, self.E, self.I, self.R]\n        probs = [self.probabilidad[est] for est in lista_estados]\n\n        for ind, row in self.info_poblacion.iterrows():\n            estado_init = row['estado_inicial']\n            if estado_init == 'random':\n                estado_init = np.random.choice(lista_estados, 1, p=probs)[0]\n\n \n            inicio_sintomas = min(np.random.lognormal(np.log(4.1) - 8 / 9, 4 / 3), 20) + 1\n            final_sintomas = inicio_sintomas + np.random.randint(7, 10)\n            duracion_infeccion = final_sintomas + np.random.randint(5, 10)\n            dia_muerte = final_sintomas - 1\n            dias_sintomas = [int(inicio_sintomas), int(final_sintomas)]\n\n            dia_aparicion_ac = 0\n            sintomatico = False\n            muere = False\n\n            if np.random.rand() < self.probabilidad['sintomatico']:\n                sintomatico = True\n                if np.random.rand() < self.probabilidad['muerte']:\n                    muere = True\n\n            tipo_turno = row['tipo_turno']\n                \n            poblacion[ind] = Individuo(estado_init, ind, duracion_infeccion, dias_sintomas, dia_muerte, dia_aparicion_ac, sintomatico, muere, self.dia_inicial, tipo_turno)\n            if estado_init == 'random':\n                poblacion[ind].tiempo_infeccioso = random.randint(10, 17)\n\n        return poblacion\n\n    def actualizar_estados(self):\n        self.estados = dict((ind.id, ind.estado) for ind in self.poblacion.values())\n        \n    def actualizar_estados_observados(self):\n        self.estados_observados = dict((ind.id, ind.estado_observado) for ind in self.poblacion.values())\n        \n    def actualizar_actividades(self):\n        self.actividades = dict((ind.id, ind.actividad) for ind in self.poblacion.values())\n        \n    def actualizar_estados_actividades(self):\n        self.estados_actividades = dict((ind.id, (ind.estado, ind.actividad)) for ind in self.poblacion.values())\n        \n    def historia_estado_poblacion(self):\n        return [Counter(estados.values()) for estados in self.historia_estados]\n    \n    def historia_estado_observado_poblacion(self):\n        return [Counter(estados.values()) for estados in self.historia_estados_observados]\n    \n    def historia_actividad_poblacion(self):\n        return [Counter(actividades.values()) for actividades in self.historia_actividades]\n    \n    def historia_estado_actividad_poblacion(self):\n        return [Counter(estados_actividades.values()) for estados_actividades in self.historia_estados_actividades]\n            \n    def actualizar_probabilidad(self):\n        trabajando = [ind for ind in self.poblacion.values() if (ind.actividad == 'trabajo') & (ind.determinar_turno() != 0)]\n        infecciosos_trabajando = [ind for ind in trabajando if ind.estado == self.I]\n\n        self.p_contagio_diaria['trabajo'] = self.beta_empresa * len(infecciosos_trabajando) / max(1, len(trabajando)) \n        # / 2 + 3/1000 * self.beta_poblacion / 2\n        # print(self.beta_empresa * len(infecciosos_trabajando) / max(1, len(trabajando)))\n        # print(len(infecciosos_trabajando))\n\n        \n    def tick(self):\n        for ind in self.poblacion.values():\n            ind.tick(self.p_contagio_diaria)\n            \n        self.poblacion = dict((ind.id, ind) for ind in self.poblacion.values() if ind.vive)\n     \n        self.actualizar_probabilidad()\n        \n        self.historia_numero_tests.append(self.numero_tests)\n\n        self.historia_infectados_totales.update({ind.id for ind in self.poblacion.values() if ind.estado == 'infeccioso'})\n        self.numero_infectados_totales.append(len(self.historia_infectados_totales))\n\n        self.historia_observados_totales.update({ind.id for ind in self.poblacion.values() if ind.estado == 'infeccioso' and ind.estado_observado == self.I})\n        self.numero_observados_totales.append(len(self.historia_observados_totales))\n            \n        self.tiempo += 1\n        self.dia += dt.timedelta(days=1)\n        \n    def terminar(self):\n        pass\n    \n    def simular(self, algoritmo, tiempo_simulacion):\n        while self.tiempo < tiempo_simulacion:\n            self.poblacion = algoritmo.decidir(self.poblacion, self.tiempo, self.dia, self.precision_tests)\n            self.numero_tests = algoritmo.numero_tests\n            self.tick()\n            algoritmo.tick()\n        \n        self.terminar()  \n\nclass SimuladorEficiente(SimuladorBase):\n    def __init__(self, tamano_poblacion, precision_tests, probabilidad, duracion_infeccion, R0_poblacion, dia_inicial):\n        super().__init__(tamano_poblacion, precision_tests, probabilidad, duracion_infeccion, R0_poblacion, dia_inicial)\n\n        self.estados_actividades_obs = dict((ind.id, (ind.estado, ind.estado_observado, ind.actividad, ind.sintomatico)) for ind in self.poblacion.values())\n        self.df_estados_actividades_obs = pd.DataFrame.from_dict(Counter(self.estados_actividades_obs.values()), orient='index')\n        self.df_estados_actividades_obs['tiempo'] = self.tiempo\n        \n    def contar_estados_actividades_obs(self):\n        estado_actividad_actual = pd.DataFrame.from_dict(Counter(self.estados_actividades_obs.values()), orient='index')\n        estado_actividad_actual['tiempo'] = self.tiempo\n        self.df_estados_actividades_obs = pd.concat([self.df_estados_actividades_obs, estado_actividad_actual], axis=0)\n\n    def actualizar_estados_actividades_obs(self):\n        self.estados_actividades_obs =  dict((ind.id, (ind.estado, ind.estado_observado, ind.actividad, ind.sintomatico)) for ind in self.poblacion.values())\n        \n    def tick(self):\n        super().tick()\n\n        self.actualizar_estados_actividades_obs()\n        self.contar_estados_actividades_obs()\n\n\n\n",
-			"file": "base/simulador.py",
-			"file_size": 7538,
-			"file_write_time": 132415639537190893,
-			"settings":
-			{
-				"buffer_size": 7536,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "base/algoritmos.py",
-			"settings":
-			{
-				"buffer_size": 16328,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "correr_simulacion.py",
-			"settings":
-			{
-				"buffer_size": 1476,
+				"buffer_size": 6648,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/sensitivy_analysis/correr_simulacion.py",
+			"file": "individuo.py",
 			"settings":
 			{
-				"buffer_size": 1116,
+				"buffer_size": 4998,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "algoritmos.py",
+			"settings":
+			{
+				"buffer_size": 18324,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/simular_protocolos.py",
+			"settings":
+			{
+				"buffer_size": 5544,
+				"encoding": "UTF-8",
+				"line_ending": "Windows",
+				"name": "import base_v2.simulador as simulador"
+			}
+		},
+		{
+			"file": "/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/codelco/correr_simulacion.py",
+			"settings":
+			{
+				"buffer_size": 1111,
+				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
@@ -346,7 +371,21 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/codelco/base/algoritmos.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/codelco/correr_simulacion.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/sensitivy_analysis/simulaciones_eficiente.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/codelco/simulaciones_eficiente.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/base_v2/test_module.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/base_v2/test_main.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/codelco/base/simulador.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/codelco/dias_infecciosos_empresa_ajustado.pdf",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/base_v2/__init__.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/ccu2/base/individuo.py",
 		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/sensitivy_analysis/correr_simulacion.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/ccu2/correr_simulacion.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/ccu2/base/algoritmos.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/ccu2/base/simulador.py",
+		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/ccu2/simulaciones_eficiente.py",
 		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/ccu/correr_simulacion.py",
 		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/ccu/base/simulador.py",
 		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/ccu/base/individuo.py",
@@ -361,7 +400,6 @@
 		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/base/seir/individuo.py",
 		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/base/seir/simulador.py",
 		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/base/seir/algoritmos.py",
-		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/sensitivy_analysis/simulaciones_eficiente.py",
 		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/simulaciones_eficiente.py",
 		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/correr_simulacion.py",
 		"/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/sensitivy_analysis/simulador_sens.py",
@@ -467,6 +505,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"random.",
+			"random",
 			"drop",
 			"browser",
 			"_G",
@@ -482,6 +522,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"np.random.",
 			"_M",
 			""
 		],
@@ -499,179 +540,19 @@
 			[
 				{
 					"buffer": 0,
-					"file": "simulaciones_eficiente.py",
+					"file": "simulador.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6871,
+						"buffer_size": 13550,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6094,
-								6094
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2089.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "base/individuo.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6031,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1654,
-								1654
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 462.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 0,
-			"sheets":
-			[
-				{
-					"buffer": 2,
-					"file": "base/simulador.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7536,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1282,
-								1282
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 179.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "base/algoritmos.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 16328,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1838,
-								1838
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 143.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 0,
-			"sheets":
-			[
-				{
-					"buffer": 4,
-					"file": "correr_simulacion.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1476,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								561,
-								561
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 194.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/sensitivy_analysis/correr_simulacion.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1116,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								350,
-								350
+								982,
+								982
 							]
 						],
 						"settings":
@@ -684,7 +565,162 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/simulaciones_eficiente.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7211,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								421,
+								354
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1764.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/codelco/simulaciones_eficiente.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6648,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5285,
+								5285
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 737.0,
+						"zoom_level": 1.0
+					},
 					"stack_index": 5,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 3,
+					"file": "individuo.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4998,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2393,
+								2393
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 575.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "algoritmos.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 18324,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8098,
+								8098
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1324.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/simular_protocolos.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5544,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								516,
+								516
+							]
+						],
+						"settings":
+						{
+							"auto_name": "import base_v2.simulador as simulador",
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
@@ -695,6 +731,40 @@
 			[
 				{
 					"buffer": 6,
+					"file": "/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/codelco/correr_simulacion.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1111,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								618,
+								644
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 7,
 					"semi_transient": false,
 					"settings":
 					{
@@ -780,7 +850,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 7,
 					"type": "text"
 				}
 			]
@@ -826,8 +896,8 @@
 		"cols":
 		[
 			0.0,
-			0.328125,
-			0.657291666667,
+			0.327604166666,
+			0.658333333333,
 			1.0
 		],
 		"rows":
@@ -847,10 +917,10 @@
 		"height": 0.0
 	},
 	"pinned_build_system": "",
-	"project": "ccu_diario.sublime-project",
+	"project": "base_v2.sublime-project",
 	"replace":
 	{
-		"height": 50.0
+		"height": 72.0
 	},
 	"save_all_on_build": true,
 	"select_file":

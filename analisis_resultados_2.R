@@ -1,22 +1,14 @@
 
 # Parametros simulacion
-    
-alg =           c('HacerNada', 'Bios', 'Bios')
-frec_test =     c(0, 1, 7)#rep(c(3, 0), each=8)#rep(c(0, 3, 0, 0), 20) 
-ctna_dur =      rep(14, 60)
-ctna_inic =     rep(0, 60)
-pob =           rep(100, 60)
-r0 =            rep(2.9, 50)
-tiempo =        rep(92, 60)
-iteraciones =   rep(1000, 4)
-fecha =         rep(c('11-08', '11-08', '11-08'), 60)
-p_inic =        rep(c(0.005, 0.005, 0.005), 16)
-ips =           rep(c('180.0'), 10)#rep(7.5, 40)
-sens =          rep(0.88, 2) #rep(c(0, 0.2, 0.4, 0.6, 0.8, 0.95, 0.97, 1), 2)
-nombre =        rep(c('Sin AC', 'AC 2/Semana', 'AC 1/Semana', 'AC 14 Dias'), 20)
-pcr =           c('1. Sin-PCR', '1. Sin-PCR', '1. Sin-PCR', 
-                  '2. PCR Inicial', '2. PCR Inicial', '2. PCR Inicial',
-                  '3. PCR Inicial y Contagio', '3. PCR Inicial y Contagio', '3. PCR Inicial y Contagio')
+
+serie = '01-09_base'
+algos = c('HacerNada0', 'Bios3', 'Bios7', 'BiosTurnos7', 'BiosTurnos3', 'ABT_Turnos0')
+
+################################################################################
+id = c(paste(algos[1], serie, sep='_'))
+for(a in 2:length(algos)){
+    id = c(id, paste(algos[a], serie, sep='_'))
+}
 
 ################################################################################
 
@@ -32,13 +24,258 @@ library(forecast)
 library(xtable)
 
 ################################################################################
+
+path_num_inf = function(s){
+    paste('../datos_simulaciones/numero_infecciosos_', s, '.csv', sep='')
+}
+
+path_resultados = function(s){
+    paste('../datos_simulaciones/resultados_', s, '.csv', sep='')
+}
+
+################################################################################
+
+numero_infecciosos = read.csv(path_num_inf(id[1]))
+resultados = read.csv(path_resultados(id[1]))
+for(i in 2:length(id)){
+    aux = read.csv(path_num_inf(id[i]))
+    numero_infecciosos = rbind(numero_infecciosos, aux)
+    aux = read.csv(path_resultados(id[i]))
+    resultados = rbind(resultados, aux)
+}
+
+numero_infecciosos$Protocol = paste(numero_infecciosos$protocolo, numero_infecciosos$frecuencia_test, sep=' ')
+resultados$Protocol = paste(resultados$protocolo, resultados$frecuencia_test, sep=' ')
+
+coef_var = numero_infecciosos %>%
+    filter(tiempo == max(tiempo)) %>%
+    group_by(Protocol, sensibilidad) %>%
+    summarize(mean_inf = mean(infectados), sd_inf = sd(infectados) / sqrt(5000)) %>%
+    mutate(cv = sd_inf / mean_inf)
+
+trabajando = resultados %>%
+    filter(actividad == 'trabajo') %>%
+    group_by(Protocol, tiempo, it) %>%
+    summarize(trabajando = sum(cantidad)) %>%
+    group_by(Protocol) %>%
+    summarise(trabajando = mean(trabajando))
+
+Re = resultados %>%
+    filter(estado == 'infeccioso' & actividad == 'trabajo') %>%
+    #filter(tiempo %% 7 %in% c(0, 1, 2, 3, 4)) %>%
+    group_by(Protocol) %>%
+    summarize(Dias_Inf = sum(cantidad) / 5000) %>%
+    merge(coef_var, by=c('Protocol')) %>%
+    mutate(Dias_Promedio_Extraccion = Dias_Inf / mean_inf) %>%
+    mutate(Re = 3 * Dias_Promedio_Extraccion / 18) %>%
+    select(Protocol, Re)
+
+inf_base = numero_infecciosos %>%
+    filter(Protocol %in% c('Base 0')) %>%
+    select(infectados, tiempo, it)
+
+inf_protocol = numero_infecciosos %>%
+    filter(Protocol %in% c('ABT 3')) %>%
+    select(infectados, tiempo, it) %>%
+    rename(infectados_protocol = infectados) %>%
+    merge(inf_base, by=c('it', 'tiempo')) %>%
+    mutate(diff_inf = infectados - infectados_protocol)
+
+inf_protocol %>% 
+    group_by(tiempo) %>%
+    summarize(mean_diff = mean(diff_inf), 
+              sd_diff = sd(diff_inf), 
+              min_diff = min(diff_inf), 
+              max_diff = max(diff_inf),
+              q5 = quantile(diff_inf, 0.05),
+              q95 = quantile(diff_inf, 0.95),
+              q10 = quantile(diff_inf, 0.1),
+              q90 = quantile(diff_inf, 0.9),
+              q16 = quantile(diff_inf, 0.16),
+              q84 = quantile(diff_inf, 0.84),
+              q025 = quantile(diff_inf, 0.025),
+              q975 = quantile(diff_inf, 0.975)) %>%
+    ggplot(aes(x=tiempo, y=mean_diff)) + geom_line() +
+    #geom_ribbon(aes(ymin = mean_diff - sd_diff, ymax = mean_diff + sd_diff), alpha=0.2)
+    geom_ribbon(aes(ymin = q025, ymax = q975), alpha=0.2) +
+    xlab('Days') +
+    ylab('') +
+    scale_y_continuous(breaks = seq(0, 50, 2)) +
+    ggtitle('Difference in number of workers infected')
+
+inf_protocol %>%
+    filter(tiempo %in% c(30, 60, 90, 120, 150)) %>%
+    mutate(tiempo = as.factor(tiempo)) %>%
+    ggplot(aes(x=tiempo, y=diff_inf)) +
+        geom_boxplot()
+
+protocol_name = function(p){
+    if (p == 'Bios 3'){a = 'ABT 3'}
+    if (p == 'Bios 7'){a = 'ABT 7'}
+    if (p == 'BiosTurnos 3'){a = 'ABT 3 + Shift 14'}
+    if (p == 'BiosTurnos 7'){a = 'ABT 7 + Shift 14'}
+    if (p == 'HacerNada 0'){a = 'Base'}
+    if (p == 'Contactos_Estrechos 0'){a = 'Base + Close Contacts'}
+    if (p == 'ABT_Turnos 0'){a = 'Shift 14'}
+    return(a)
+}
+    
+numero_infecciosos$Protocol2 = numero_infecciosos$Protocol
+numero_infecciosos$Protocol = numero_infecciosos$Protocol2 %>% sapply(protocol_name)
+
+legend_level = c('Base', 'Shift 14', 'ABT 7', 'ABT 3', 'ABT 7 + Shift 14', 'ABT 3 + Shift 14')
+
+numero_infecciosos %>%
+    mutate(Protocol = factor(Protocol, levels=legend_level)) %>%
+    group_by(Protocol, tiempo) %>%
+    summarize(infectados = mean(infectados)) %>%
+    ggplot(aes(x=tiempo, y=infectados, color=Protocol)) +
+    geom_point() +
+    xlab('Days') +
+    ylab('') +
+    scale_y_continuous(breaks = seq(0, 24, 2)) +
+    ggtitle('Cumulative number of infected individuals')
+
+resultados %>%
+    filter(protocolo == 'HacerNada') %>%
+    group_by(estado, tiempo) %>%
+    summarize(cantidad = sum(cantidad / 10)) %>%
+    ggplot(aes(x=tiempo, y=cantidad, color=estado)) +
+    geom_line()
+
+################################################################################
+
+r0_range = function(x, y, n){
+    a = seq(x[1], y[1], n[1])
+    b = seq(x[2], y[2], n[2])
+    df = data.frame(r0_emp=double(), r0_pob=double())
+    for(i in a){
+        for(j in b){
+            df = rbind(df, c(i, j))
+            df = rbind(df, c(i, j))
+        }
+    }
+    return(df)
+}
+
+df = r0_range(c(2.0, 0.8), c(4.0, 2.0), c(0.2, 0.2))
+df2 = r0_range(c(2.0, 0.8), c(4.0, 2.0), c(0.2, 0.2))
+colnames(df2) = c('r0_emp', 'r0_pob')
+df$X1 = format(round(df$X1, 1), nsmall = 1)
+df$X2 = format(round(df$X2, 1), nsmall = 1)
+
+################################################################################
 path_sim = function(n){
     return(paste('_' , alg[n] , '_frec=' , frec_test[n] , '_r0=' , r0[n] , '_pi=', p_inic[n], '_iter=' , iteraciones[n] , '_sens=', sens[n], '_', fecha[n] , sep=''))
 }
 
 path_sim2 = function(n){
-    return(paste('_' , alg[n] , '_frec=' , frec_test[n] , '_pob=', pob[n], '_cinic=', ctna_inic[n], '_r0=' , r0[n] , '_pi=', p_inic[n], '_iter=' , iteraciones[n], '_', fecha[n] , sep=''))
+    return(paste('_' , alg[n] , '_frec=' , frec_test[n] , '_pob=', pob[n], '_cinic=', ctna_inic[n], '_r0=' , r0[n] , '_r0_pob=', r0_pob[n], '_pi=', p_inic[n], '_iter=' , iteraciones[n], '_', fecha[n] , sep=''))
 }
+
+path_sim3 = function(r0_emp, r0_pob, a){
+    test = frec_test[a]
+    if(r0_pob == '0.8'){
+        test = 7
+    }
+    return(paste('_' , alg[a] , '_frec=' , test , '_pob=', pob[1], '_r0=' , r0_emp , '_r0pob=', r0_pob, '_pi=', p_inic[1], '_iter=' , iteraciones[1], '_', fecha[1] , sep=''))
+}
+
+inf_total = function(r0_emp, r0_pob){
+    sim1 = path_sim3(r0_emp, r0_pob, 1)
+    sim2 = path_sim3(r0_emp, r0_pob, 2)
+    X = 0:iteraciones[1]
+    aux2 = data.frame(X)
+    aux2$infecciosos = 0
+    
+    out1 = read.csv(paste('../../datos_simulaciones/numero_infecciosos', sim1, '.csv', sep='')) %>%
+        gather(tiempo, infecciosos, X0:X92) %>%
+        mutate(tiempo = as.numeric(substr(tiempo, 2, 100))) %>%
+        filter(tiempo == max(tiempo)) %>%
+        select(X, infecciosos) %>%
+        rbind(aux2) %>%
+        group_by(X) %>%
+        summarize(infecciosos = sum(infecciosos))%>%
+        summarize(infecciosos = mean(infecciosos))
+    
+    out2 = read.csv(paste('../../datos_simulaciones/numero_infecciosos', sim2, '.csv', sep='')) %>%
+        gather(tiempo, infecciosos, X0:X92) %>%
+        mutate(tiempo = as.numeric(substr(tiempo, 2, 100))) %>%
+        filter(tiempo == max(tiempo)) %>%
+        select(X, infecciosos) %>%
+        rbind(aux2) %>%
+        group_by(X) %>%
+        summarize(infecciosos = sum(infecciosos)) %>%
+        summarize(infecciosos = mean(infecciosos))
+    
+    return(c(out1$infecciosos, out2$infecciosos))
+}  
+     
+results = apply(df, 1, function(x) inf_total(as.character(x[1]), as.character(x[2]))) %>%
+    t() %>%
+    data.frame() %>%
+    cbind(df2) %>%
+    mutate(diff = X1 - X2, ratio = diff / X1, percentage = diff / 345 * 100)
+
+results$semaforo = '#FFFF99'
+results[results$ratio < 0.17, 'semaforo'] = 'green'
+results[results$ratio > 0.24, 'semaforo'] = 'red'
+
+results$semaforo2 = 'yellow'
+results[results$percentage < 1.25, 'semaforo2'] = 'green'
+results[results$percentage > 2.5, 'semaforo2'] = 'red'
+
+results$Porcentaje = '1.25% - 2.5%'
+results[results$percentage < 1.25, 'Porcentaje'] = '< 1.25%'
+results[results$percentage > 2.5, 'Porcentaje'] = '> 2.5%'
+
+
+
+results %>%
+    ggplot(aes(x=r0_emp, y=r0_pob, color=diff)) +
+        geom_point(size=10) +
+        scale_color_gradient(low="green", high="red")
+
+results %>%
+    ggplot(aes(x=r0_emp, y=r0_pob, color=ratio)) +
+    geom_point(size=10) +
+    scale_color_gradient(low="green", high="red")
+
+results %>%
+    ggplot(aes(x=r0_emp, y=r0_pob)) +
+    #geom_point(size=0.01) +
+    theme_bw() +
+    scale_y_continuous(breaks=seq(0.8,2,0.1)) +
+    scale_x_continuous(breaks=seq(2,4,0.2))
+    scale_color_gradien(low="green", high="red")
+
+results %>%
+    ggplot(aes(x=r0_emp, y=r0_pob, color=percentage)) +
+    geom_point(size=10) +
+    scale_color_gradient(low="green", high="red")
+
+col <- as.character(results$semaforo2)
+names(col) <- results$Porcentaje
+
+results %>%
+    mutate(Porcentaje = factor(Porcentaje, levels=c('< 1.25%', '1.25% - 2.5%', '> 2.5%'))) %>%
+    ggplot(aes(x=r0_emp / 17.5 * 7.8, y=r0_pob, color=Porcentaje)) +
+    theme_bw() +
+    scale_y_continuous(breaks=seq(0.8,2,0.2)) +
+    scale_x_continuous(breaks=seq(2/17.5 * 7.8,4/17.5 * 7.8,0.2/17.5 * 7.8), labels=round(seq(2/17.5 * 7.8,4/17.5 * 7.8,0.2/17.5 * 7.8), 2)) +
+    scale_color_manual(values=col) +
+    geom_point(size=10) #+
+    #scale_color_gradient(low="green", high="red")
+
+
+
+
+
+
+
+
+
+
 
 numero_infecciosos = function(sim){
     X = 0:iteraciones[1]

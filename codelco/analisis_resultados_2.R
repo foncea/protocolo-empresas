@@ -1,26 +1,26 @@
 
 # Parametros simulacion
-    
-alg =           c( 'BiosTurnos', 'BiosTurnos',  'BiosTurnos', 'BiosTurnos')
-frec_test =     c( 0, 1, 7, 14)#rep(c(3, 0), each=8)#rep(c(0, 3, 0, 0), 20) 
+
+alg =           c( 'BiosTurnos', 'BiosTurnos',  'BiosTurnos','BiosTurnos', 'BiosTurnos', 'PCRTurnos')
+frec_test =     c(0, 1, 7, 14, 15, 14, 15)#rep(c(3, 0), each=8)#rep(c(0, 3, 0, 0), 20) 
 ctna_dur =      rep(14, 60)
 ctna_inic =     rep(0, 60)
 pob =           rep(1000, 60)
-r0 =            rep(3, 50)
+r0 =            rep(2.9, 50)
 tiempo =        rep(92, 60)
 iteraciones =   rep(1000, 12)
-fecha =         rep('29-07', 60)
+fecha =         rep('07-08', 60)
 p_inic =        rep(0.005, 16)
 ips =           rep(c('180.0'), 10)#rep(7.5, 40)
 sens =          rep(0.88, 12) #rep(c(0, 0.2, 0.4, 0.6, 0.8, 0.95, 0.97, 1), 2)
-nombre =        rep(c('Turnos', 'AC 2/Semana + Turnos',  'AC 1/Semana + Turnos',  'AC 14 Dias + Turnos'), 1)
+nombre =        rep(c('Turnos', 'AC 2/Semana + Turnos',  'AC 1/Semana + Turnos',  'AC 14 Dias + Turnos',  'AC 14 Dias (Desfase) + Turnos', 'PCR 14 Dias + Turnos', 'PCR 14 Dias (Desfase) + Turnos'), 1)
 pcr =           c('1. Sin-PCR', '1. Sin-PCR', '1. Sin-PCR', 
                   '2. PCR Inicial', '2. PCR Inicial', '2. PCR Inicial',
                   '3. PCR Inicial y Contagio', '3. PCR Inicial y Contagio', '3. PCR Inicial y Contagio')
 
 ################################################################################
 
-library(ggplot2)
+library(ggplot22)
 library(tidyr)
 library(dplyr)
 library(rlang)
@@ -30,6 +30,7 @@ library(viridis)
 library(latex2exp)
 library(forecast)
 library(xtable)
+library(scales)
 
 ################################################################################
 path_sim = function(n){
@@ -205,9 +206,13 @@ trabajando_tiempo = function(sim){
        geom_text(aes(label=round(Dias_Promedio_Extraccion, digits=1)), position=position_dodge(width=0.9), vjust=-0.25) 
    p
    
+   addline_format <- function(x,...){
+       gsub('\\s','\n',x)
+   }
+   
    p = merge(cv_it, dias_infecciosos, by=c('Protocolo')) %>%
        mutate(Dias_Promedio_Extraccion = Dias_Inf / MEAN) %>%
-       mutate(Protocolo = factor(Protocolo, levels=nombre[c(2, 3,4,1)])) %>%
+       mutate(Protocolo = factor(Protocolo, levels=nombre[c(1, 4, 6, 5, 3, 2)])) %>%
        ggplot(aes(x=Protocolo, y=r0[1] * Dias_Promedio_Extraccion / 17.5, fill=Protocolo)) +
        geom_bar(stat='identity', position='dodge', color='black') +
        ggtitle(TeX('$R_e$ Ajustado')) +
@@ -216,8 +221,9 @@ trabajando_tiempo = function(sim){
        #xlab(TeX('$R_0$')) +
        theme_bw() + 
        scale_fill_brewer(palette='Set3') +
-       geom_text(aes(label=round(r0[1] * Dias_Promedio_Extraccion / 17.5, digits=1)), position=position_dodge(width=0.9), vjust=-0.25) 
-   p
+       geom_text(aes(label=round(r0[1] * Dias_Promedio_Extraccion / 17.5, digits=2)), position=position_dodge(width=0.9), vjust=-0.25) +
+       scale_x_discrete(labels=addline_format(nombre[c(1, 4, 6, 5, 3, 2)]))
+    p
 }
 ggsave(paste('../plots/ABT_1_semana_07_07/Dias-hombre Infectados en Trabajo.pdf', sep=''), p1)
 ggsave(paste('../plots/ABT_1_semana_07_07/Dias promedio entre infeccion y cuarentena.pdf', sep=''), p)
@@ -372,12 +378,12 @@ cv_it %>%
     aux['intervalo'] = 0
     
     p = resultados %>% 
-        mutate(Protocolo = factor(Protocolo, levels=nombre[c(1,2,4,3)])) %>%
+        mutate(Protocolo = factor(Protocolo, levels=nombre[c(1, 4, 6, 5, 3, 2)])) %>%
     #    rbind(aux) %>%
             ggplot(aes(x=tiempo, y=infecciosos/1000, color=Protocolo)) +
                 xlab('Dias') +
                 scale_y_continuous(labels = scales::percent) +
-                geom_line() +
+                geom_line(size=1) +
                 ylab("Porcentaje c/r al tamano de la empresa") +
                 #geom_line(size=1.5)+
                 #geom_point(data=resultados[resultados$Protocolo == 'Realidad', ]) +
@@ -407,13 +413,38 @@ seir %>%
     }
     N=1000
     
+    addline_format <- function(x,...){
+        gsub('\\s','\n',x)
+    }
+
     resultados %>%
         filter(actividad == 'cuarentena') %>%
         mutate(cantidad = ifelse(Protocolo == 'Con AC', cantidad , cantidad)) %>% 
-        ggplot(aes(x=tiempo, y=cantidad/N, color=Protocolo)) +
+        ggplot(aes(x=tiempo, y=ma(cantidad/N, order=14), color=Protocolo)) +
             geom_line() +
-        ggtitle('Porcentaje de trabajadores en cuarentena') +
+        ggtitle('Porcentaje de trabajadores en cuarentena (Media Movil 2 Semanas)') +
         scale_y_continuous(labels = scales::percent) 
+    
+    p = resultados %>%
+        filter(actividad == 'cuarentena') %>%
+        mutate(Protocolo = factor(Protocolo, levels=nombre[c(6, 1, 4, 5, 3, 2)])) %>%
+        mutate(cantidad = ifelse(Protocolo == 'AC 14 Dias', cantidad, cantidad)) %>% 
+        mutate(cantidad = ifelse(Protocolo == 'AC 1/Semana', cantidad, cantidad)) %>% 
+        mutate(cantidad = ifelse(Protocolo == 'AC 2/Semana', cantidad, cantidad)) %>% 
+        group_by(Protocolo) %>%
+        summarize(mean_cuarentena = mean(cantidad/N)) %>%
+        ggplot(aes(x=Protocolo, y=2*(1-mean_cuarentena), fill=Protocolo)) +
+        geom_bar(stat='identity', position='dodge', color='black') +
+        ggtitle('Porcentaje de empleados en faena (Promedio Diario)') +
+        ylab('Dias') + 
+        xlab('') +
+        #xlab(TeX('$R_0$')) +
+        theme_bw() + 
+        scale_fill_brewer(palette='Set3') +
+        geom_text(aes(label=scales::label_percent(accuracy=0.1)(round(2*(1-mean_cuarentena), 4))), position=position_dodge(width=0.9), vjust=-0.25) +
+        scale_y_continuous(labels = scales::percent, limits=c(0.975, 1), oob=rescale_none)+
+        scale_x_discrete(labels=addline_format(nombre[c(6, 1, 4, 5, 3, 2)]))
+    p
     
    
 }

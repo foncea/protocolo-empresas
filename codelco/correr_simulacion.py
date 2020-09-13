@@ -1,20 +1,27 @@
 import os
 import time
 import datetime
+import itertools
 
 # Parametros
 
-alg =           ['HacerNada', 'BiosTurnos', 'BiosTurnos', 'BiosTurnos', 'BiosTurnos'] # 
-frec_test =     [0, 0, 1, 7, 14] * 2
-ctna_dur =      [14] * 12
-ctna_inic =     [0] * 16 
-pob =           [1000] * 20
-r0 =            [3] * 20
-tiempo =        [92] * 16
-iteraciones =   [1000] * 20
-fecha =         ['30-07'] * 20
-p_i =           [0.005, 0.005, 0.005, 0.005]  * 2
-dia_inicial =   '2020-07-27'
+df = pd.DataFrame()
+df['protocolo'] = 			['Bios', 'HacerNada']
+df['frecuencia_test'] = 	[7, 0]
+df['cuarentena_duracion'] = 14
+df['cuarentena_inicial'] = 	0
+df['tamano_poblacion'] = 	100
+df['r0_emp'] = 				3
+df['r0_pob'] = 				1.5
+df['sensibilidad'] = 		0.88
+df['inf_post_sint'] = 		'5,10'
+df['tiempo'] = 				150
+df['numero_iteraciones'] = 	1000
+fecha = 					'21-08'
+serie = 					''
+df['serial'] = 				fecha + serie
+
+
 # archivo =       'input_3.csv'
 
 # Correr simulaciones de escenarios

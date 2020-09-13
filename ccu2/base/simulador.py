@@ -21,7 +21,7 @@ class SimuladorBase:
         self.dia_inicial = dia_inicial
 
         self.alpha = 1 / 3  #periodo de incubacion
-        self.gamma = 1 / 17.5 #periodo medio de infeccion
+        self.gamma = 1 / 18 #periodo medio de infeccion
         self.beta_poblacion = self.gamma * self.R0_poblacion
         self.beta_empresa = self.gamma * self.R0_empresa
         self.p_contagio_diaria = {'trabajo': self.probabilidad[self.I] * self.beta_empresa,
@@ -36,6 +36,9 @@ class SimuladorBase:
         self.historia_infectados_totales = {ind.id for ind in self.poblacion.values() if ind.estado == self.I}
         self.numero_infectados_totales = [len(self.historia_infectados_totales)]
 
+        self.historia_observados_totales = {ind.id for ind in self.poblacion.values() if ind.estado == self.I and ind.estado_observado == self.I}
+        self.numero_observados_totales = [len(self.historia_observados_totales)]
+
     def crear_poblacion(self):
         poblacion = {}
         lista_estados = [self.S, self.E, self.I, self.R]
@@ -45,6 +48,7 @@ class SimuladorBase:
             estado_init = row['estado_inicial']
             if estado_init == 'random':
                 estado_init = np.random.choice(lista_estados, 1, p=probs)[0]
+
  
             inicio_sintomas = min(np.random.lognormal(np.log(4.1) - 8 / 9, 4 / 3), 20) + 1
             final_sintomas = inicio_sintomas + np.random.randint(7, 10)
@@ -64,6 +68,8 @@ class SimuladorBase:
             tipo_turno = row['tipo_turno']
                 
             poblacion[ind] = Individuo(estado_init, ind, duracion_infeccion, dias_sintomas, dia_muerte, dia_aparicion_ac, sintomatico, muere, self.dia_inicial, tipo_turno)
+            if estado_init == 'random':
+                poblacion[ind].tiempo_infeccioso = random.randint(10, 17)
 
         return poblacion
 
@@ -110,8 +116,12 @@ class SimuladorBase:
         self.actualizar_probabilidad()
         
         self.historia_numero_tests.append(self.numero_tests)
+
         self.historia_infectados_totales.update({ind.id for ind in self.poblacion.values() if ind.estado == 'infeccioso'})
         self.numero_infectados_totales.append(len(self.historia_infectados_totales))
+
+        self.historia_observados_totales.update({ind.id for ind in self.poblacion.values() if ind.estado == 'infeccioso' and ind.estado_observado == self.I})
+        self.numero_observados_totales.append(len(self.historia_observados_totales))
             
         self.tiempo += 1
         self.dia += dt.timedelta(days=1)

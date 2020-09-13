@@ -79,6 +79,16 @@ class Individuo:
         self.fecha_ultimo_test = self.tiempo
         self.historia_test.append(self.ultimo_test)
         return self.ultimo_test
+
+    def testear_PCR(self):
+        if self.estado == 'infeccioso':
+            self.ultimo_test = (0.85 > random.rand())
+        else:
+            self.ultimo_test = (0.995 < random.rand())
+        
+        self.fecha_ultimo_test = self.tiempo
+        self.historia_test.append(self.ultimo_test)
+        return self.ultimo_test
     
     def aplicar_cuarentena(self):
         self.actividad = 'cuarentena'

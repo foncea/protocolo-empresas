@@ -2,14 +2,14 @@
 # Parametros simulacion
     
 alg =           c('HacerNada', 'Bios')
-frec_test =     c(0, 7)#rep(c(3, 0), each=8)#rep(c(0, 3, 0, 0), 20) 
+frec_test =     c(0, 1)#rep(c(3, 0), each=8)#rep(c(0, 3, 0, 0), 20) 
 ctna_dur =      rep(14, 600)
 ctna_inic =     rep(0, 600)
 pob =           rep(100, 600)
-r0 =            rep(2.9, 500)
+r0 =            rep(3, 500)
 tiempo =        rep(92, 600)
-iteraciones =   rep(1000, 400)
-fecha =         rep(c('14-08', '14-08', '14-08'), 60)
+iteraciones =   rep(500, 400)
+fecha =         rep(c('19-10'), 600)
 p_inic =        rep(c(0.005, 0.005, 0.005), 160)
 ips =           rep(c('180.0'), 100)#rep(7.5, 40)
 sens =          rep(0.88, 200) #rep(c(0, 0.2, 0.4, 0.6, 0.8, 0.95, 0.97, 1), 2)
@@ -63,9 +63,9 @@ path_sim2 = function(n){
 
 path_sim3 = function(r0_emp, r0_pob, a){
     test = frec_test[a]
-    if(r0_pob == '0.8'){
-        test = 7
-    }
+    #if(r0_pob == '0.8'){
+     #   test = 7
+    #}
     return(paste('_' , alg[a] , '_frec=' , test , '_pob=', pob[1], '_r0=' , r0_emp , '_r0pob=', r0_pob, '_pi=', p_inic[1], '_iter=' , iteraciones[1], '_', fecha[1] , sep=''))
 }
 
@@ -103,7 +103,18 @@ results = apply(df, 1, function(x) inf_total(as.character(x[1]), as.character(x[
     t() %>%
     data.frame() %>%
     cbind(df2) %>%
-    mutate(diff = X1 - X2, ratio = diff / X1, percentage = diff / 345 * 100)
+    mutate(diff = X1 - X2, ratio = diff / X1, percentage = diff / 345)
+
+results %>%
+    mutate(Difference = percentage) %>%
+    ggplot(aes(x=r0_emp * 10.6 / 18, y=r0_pob, color=Difference)) +
+    geom_point(size=5) + 
+    ylab(TeX('$R_e$')) +
+    xlab(TeX('$R_e^w(Base)$')) +
+    scale_color_gradient(low="green", high="red", labels=scales::percent) + 
+    theme_bw() +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
 
 results$semaforo = '#FFFF99'
 results[results$ratio < 0.17, 'semaforo'] = 'green'

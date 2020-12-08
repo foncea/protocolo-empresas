@@ -111,7 +111,7 @@
 			"file": "simulador.py",
 			"settings":
 			{
-				"buffer_size": 13550,
+				"buffer_size": 13671,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -156,7 +156,7 @@
 			"file": "/C/Users/Patricio Foncea/Dropbox (MIT)/CORONAVIRUS/Protocolo de Empresas/simulaciones_protocolo/protocolo-empresas/simular_protocolos.py",
 			"settings":
 			{
-				"buffer_size": 5544,
+				"buffer_size": 5533,
 				"encoding": "UTF-8",
 				"line_ending": "Windows",
 				"name": "import base_v2.simulador as simulador"
@@ -544,15 +544,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 13550,
+						"buffer_size": 13671,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								982,
-								982
+								778,
+								778
 							]
 						],
 						"settings":
@@ -565,7 +565,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -647,8 +647,8 @@
 						"selection":
 						[
 							[
-								2393,
-								2393
+								3771,
+								3771
 							]
 						],
 						"settings":
@@ -658,10 +658,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 575.0,
+						"translation.y": 313.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -688,10 +688,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1324.0,
+						"translation.y": 79.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
@@ -700,27 +700,29 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5544,
+						"buffer_size": 5533,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								516,
-								516
+								711,
+								711
 							]
 						],
 						"settings":
 						{
 							"auto_name": "import base_v2.simulador as simulador",
-							"syntax": "Packages/Python/Python.sublime-syntax"
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]

@@ -17,22 +17,24 @@ def r0_range(x, y, n):
 # Parametros
 
 alg =           ['HacerNada'] * 1000 # 
-frec_test =     [7] * 1000
+frec_test =     [0] * 1000
 ctna_dur =      [14] * 1000
 ctna_inic =     [0] * 1000
 pob =           [100] * 1000
-r0 =            [2.9] 
+r0 =            [2.9] * 1000    
 r0_pob =        [1.6] * 1000
 tiempo =        [92] * 1000
-iteraciones =   [1000] * 1000
-fecha =         ['14-08'] * 1000
+iteraciones =   [500] * 1000
+fecha =         ['19-10'] * 1000
 p_i =           [0.005, 0.005, 0.005, 0.005]  * 1000
 dia_inicial =   '2020-07-14'
 archivo =       'input_3.csv'
 
-r0, r0_pob = r0_range([2, 0.8], [4.1, 1.0], [0.2, 0.2])
+r0, r0_pob = r0_range([2, 0.8], [4.1, 2.1], [0.2, 0.2])
 r0 = np.round(r0, 1)
 r0_pob = np.round(r0_pob, 1)
+print(r0)
+print(r0_pob)
 
 # Correr simulaciones de escenarios
 

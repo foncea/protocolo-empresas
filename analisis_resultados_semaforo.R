@@ -1,8 +1,8 @@
 
 # Parametros simulacion
 
-serie = '15-10_base'
-algos = c('Base0', 'ABT3')
+serie = '01-09_base'
+algos = c('Bios3', 'Bios7', 'BiosTurnos3', 'BiosTurnos7',  'HacerNada0')
 
 id = c(paste(algos[1], serie, sep='_'))
 for(a in 2:length(algos)){
@@ -46,18 +46,44 @@ for(i in 2:length(id)){
 numero_infecciosos$Protocol = paste(numero_infecciosos$protocolo, numero_infecciosos$frecuencia_test, sep=' ')
 resultados$Protocol = paste(resultados$protocolo, resultados$frecuencia_test, sep=' ')
 
-numero_infecciosos$sensibilidad = numero_infecciosos$inf_post_sint
-resultados$sensibilidad = resultados$inf_post_sint
+base = numero_infecciosos %>% 
+    filter(protocolo == 'Base' & tiempo == max(tiempo)) %>%
+    rename(infectados_base = infectados) %>%
+    select(infectados_base, it, r0_emp, r0_pob)
 
-shedding = function(df){
-    if(df['sensibilidad'] == "0,1"){return(0.5 + 2 + 8.5)}
-    if(df['sensibilidad'] == "1,5"){return(3 + 2 + 8.5)}
-    if(df['sensibilidad'] == "5,10"){return(7.5 + 2 + 8.5)}
-    if(df['sensibilidad'] == "10,15"){return(12.5 + 2 + 8.5)}
-}
+semaforo = numero_infecciosos %>% 
+    filter(protocolo == 'ABT' & tiempo == max(tiempo)) %>%
+    merge(base, by=c('it', 'r0_emp', 'r0_pob')) %>%
+    mutate(ratio = 1 - infectados / max(infectados_base, 1),
+           diff = (infectados_base - infectados) / 100)
 
-numero_infecciosos$shedding = apply(numero_infecciosos, 1, shedding)
-resultados$shedding = apply(resultados, 1, shedding)
+semaforo %>%
+    group_by(r0_emp, r0_pob) %>%
+    mutate(ratio = mean(ratio), Difference = mean(diff)) %>%
+    ggplot(aes(x=r0_emp * 11.7 / 18, y=r0_pob, color=Difference)) + 
+    geom_point(size=5) + 
+    ylab(TeX('$R_e$')) +
+    xlab(TeX('$R_e(w)$')) +
+    scale_color_gradient(low="green", high="red", labels=scales::percent) + 
+    theme_bw() +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+semaforo %>%
+    group_by(r0_emp, r0_pob) %>%
+    mutate(ratio = mean(ratio), Difference = mean(diff)) %>%
+    ggplot(aes(x=r0_emp, y=r0_pob, color=ratio)) + 
+    geom_point(size=3) +
+    scale_color_gradient(low="green", high="red") +
+    
+    
+
+numero_infecciosos %>%
+    group_by(Protocol, r0_emp, r0_pob) %>%
+    summarize(infectados = mean(infectados)) %>%
+    ggplot(aes(x=r0_emp, y=r0_pob, color=infectados)) + 
+    geom_point(size=3) + 
+    scale_color_gradient(low="green", high="red")
+    
 
 coef_var = numero_infecciosos %>%
     filter(tiempo == max(tiempo)) %>%
@@ -81,34 +107,39 @@ Re = resultados %>%
     filter(estado == 'infeccioso' & actividad == 'trabajo') %>%
     #filter(tiempo %% 7 %in% c(0, 1, 2, 3, 4)) %>%
     group_by(Protocol, sensibilidad) %>%
-    summarize(Dias_Inf = sum(cantidad) / 1000, shedding = first(shedding)) %>%
+    summarize(Dias_Inf = sum(cantidad) / 1000) %>%
     merge(coef_var, by=c('Protocol', 'sensibilidad')) %>%
     mutate(Dias_Promedio_Extraccion = Dias_Inf / mean_inf) %>%
-    mutate(Re = 3 * Dias_Promedio_Extraccion / shedding) %>%
+    mutate(Re = 3 * Dias_Promedio_Extraccion / 18) %>%
     select(Protocol, sensibilidad, Re)
 
-inf = infectados %>% 
-    merge(trabajando %>%
-              merge(Re, by=c('Protocol', 'sensibilidad')),
-          by=c('Protocol', 'sensibilidad')) %>%
-    mutate(infectados2 = infectados - 0.5)
 
 coef_var2 = numero_infecciosos %>%
     filter(tiempo == max(tiempo)) %>%
-    group_by(Protocol, it, sensibilidad) %>%
+    group_by(Protocol, it) %>%
     summarize(mean_inf = mean(infectados), sd_inf = sd(infectados) / sqrt(5000)) %>%
     mutate(cv = sd_inf / mean_inf)
 
 dias = resultados %>%
     filter(estado == 'infeccioso' & actividad == 'trabajo') %>%
     #filter(tiempo %% 7 %in% c(0, 1, 2, 3, 4)) %>%
-    group_by(Protocol, it, sensibilidad) %>%
-    summarize(Dias_Inf = sum(cantidad), shedding = first(shedding)) %>%
-    merge(coef_var2, by=c('Protocol', 'it', 'sensibilidad')) %>%
+    group_by(Protocol, it) %>%
+    summarize(Dias_Inf = sum(cantidad)) %>%
+    merge(coef_var2, by=c('Protocol', 'it')) %>%
     mutate(Dias_Promedio_Extraccion = Dias_Inf / mean_inf) %>%
-    group_by(Protocol, sensibilidad) %>%
-    summarize(promedio_dias = mean(Dias_Promedio_Extraccion), shedding = first(shedding)) %>%
-    mutate(Re = promedio_dias * 3 / shedding)
+    group_by(Protocol) %>%
+    summarize(promedio_dias = mean(Dias_Promedio_Extraccion))
+
+%>%
+    mutate(Re = 3 * Dias_Promedio_Extraccion / 18) %>%
+    select(Protocol, sensibilidad, Re)
+
+infectados %>% 
+    merge(trabajando %>%
+              merge(Re, by=c('Protocol', 'sensibilidad')),
+          by=c('Protocol', 'sensibilidad'))
+
+
 
 
 coef_var = numero_infecciosos %>%

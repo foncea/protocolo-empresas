@@ -16,8 +16,10 @@ class SimuladorBase:
         self.R0_empresa = R0['empresa']
         self.R0_poblacion = R0['poblacion']
 
+        self.shedding_period = (self.duracion_infeccion[1] + self.duracion_infeccion[0]) / 2 + 2 + 8.5
+
         self.alpha = 1 / 3  #periodo de incubacion
-        self.gamma = 1 / 17.5 #periodo medio de infeccion
+        self.gamma = 1 / self.shedding_period  #periodo medio de infeccion
         self.beta_poblacion = self.gamma * self.R0_poblacion
         self.beta_empresa = self.gamma * self.R0_empresa
         self.p_contagio_diaria = {'trabajo': 3/700 * self.beta_empresa,

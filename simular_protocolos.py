@@ -9,21 +9,21 @@ import random
 # Parametros
 
 parametros = pd.DataFrame()
-parametros['protocolo'] =       ['ABT_Turnos']#, 'Base']
-parametros['frecuencia_test'] = [0]
+parametros['protocolo'] =       ['ABT', 'Base']
+parametros['frecuencia_test'] = [3, 0]
 
 df = {}
 df['cuarentena_duracion'] = 14
 df['cuarentena_inicial'] =  0
 df['tamano_poblacion'] =    100
-df['r0_emp'] =              3#np.linspace(1, 5, num=9)
-df['r0_pob'] =              1.5#np.linspace(0.5, 2.5, num=9)
+df['r0_emp'] =              3 #np.linspace(1, 5, num=9)
+df['r0_pob'] =              1.5  #np.linspace(0.5, 2.5, num=9)
 df['prev_inic'] =           0.0075#[0.005, 0.01, 0.0075, 0.0025]
 df['sensibilidad'] =        0.88#[0.58, 0.68, 0.78, 0.88, 0.98]
-df['inf_post_sint'] =       '5,10'#['0,1', '1,5', '5,10', '10,15']
+df['inf_post_sint'] =       ['0,1', '1,5', '5,10', '10,15']
 df['tiempo_simulacion'] =   150
-df['numero_iteraciones'] =  5000
-fecha =                     '01-09'
+df['numero_iteraciones'] =  500
+fecha =                     '15-10'
 serie =                     'base'
 df['id'] =                  fecha + '_' + serie
 
@@ -53,7 +53,7 @@ from tqdm import trange
 def prec_test(e=1, s_max=1):
     def precision_test(tiempo, tiempo_inicio_infeccion, dias_sintomas):        
         if tiempo < tiempo_inicio_infeccion + dias_sintomas[0] + 7:
-            s = 0.0
+            s = 0.2
         else:
             s = s_max
         return e, s
